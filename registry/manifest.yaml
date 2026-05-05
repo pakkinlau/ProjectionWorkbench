@@ -1,0 +1,18 @@
+repo_id: projectionworkbench
+repo_name: ProjectionWorkbench
+github_repo: pakkinlau/ProjectionWorkbench
+status: gva_v0_3_incubation_candidate
+gva_version_basis: "0.3"
+gva_version_status: guarded_design_snapshot
+canonical_surfaces:
+  - docs/gva_v0_3_boundary.md
+  - registry/manifest.yaml
+  - receipts/initialization_receipt.md
+primary_candidate_nodes:
+  - Projection
+  - ProductObject
+  - SourcePointer
+  - ArtifactReceipt
+production_use: false
+release_claim: false
+
