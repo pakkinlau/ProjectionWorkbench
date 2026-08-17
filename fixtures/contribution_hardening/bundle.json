@@ -1,23 +1,46 @@
 {
-  "episode_a": {
-    "activities": [{"actor_ref": "actor:ai", "operation": "implemented_candidate"}],
-    "artifact_refs": ["artifact:a"],
-    "episode_id": "episode:a",
-    "happened_at": "2026-08-01T00:00:00Z",
-    "outcome_state": "REVIEWED",
-    "project_ref": "p:test",
-    "recorded_at": "2026-08-01T00:05:00Z",
-    "task_context_ref": "task:a"
+  "attestation": {
+    "attestation_id": "attestation:evaluator",
+    "attestor_ref": "actor:evaluator",
+    "authority_effect": "none",
+    "claim_ceiling": "Attests only observed framing and correction",
+    "evidence_access": "inspected_source_artifacts_and_review_receipt",
+    "evidence_scope_refs": ["scope:bounded-research"],
+    "independence": "independent",
+    "nonclaims": ["No mastery", "No general expertise", "No authority"],
+    "observation_scope": "two bounded research fixtures",
+    "relationship": "independent_evaluator",
+    "state": "active",
+    "subject_ref": "actor:human"
   },
-  "episode_b": {
-    "activities": [{"actor_ref": "actor:human", "operation": "corrected_assumption"}],
-    "artifact_refs": ["artifact:b"],
-    "episode_id": "episode:b",
-    "happened_at": "2026-08-10T00:00:00Z",
-    "outcome_state": "INDEPENDENTLY_ASSESSED",
-    "project_ref": "p:test",
-    "recorded_at": "2026-08-10T00:05:00Z",
-    "task_context_ref": "task:b"
+  "capability_assertion": {
+    "actor_ref": "actor:human",
+    "assertion_id": "assertion:bounded-research-direction",
+    "attestation_refs": ["attestation:evaluator"],
+    "authority_effect": "none",
+    "capability_ref": "capability:bounded-research-direction",
+    "claim_ceiling": "Repeated bounded task-level framing and correction only",
+    "claim_level": "task_bounded",
+    "claim_text": "Demonstrated bounded research-task framing and correction across two episodes.",
+    "contribution_refs": ["contrib:a", "contrib:b"],
+    "currentness": "current",
+    "evidence_scope_refs": ["scope:bounded-research"],
+    "independent_assessment_refs": ["assessment:independent-001"],
+    "limitations": ["No mastery", "No cross-domain generalization"],
+    "recurrence_count": 2,
+    "recurrence_episode_refs": ["episode:a", "episode:b"],
+    "scope": "research software fixtures",
+    "state": "supported_bounded",
+    "transfer_evidence": [
+      {
+        "capability_ref": "capability:bounded-research-direction",
+        "evidence_refs": ["evidence:review"],
+        "evidence_scope_ref": "scope:bounded-research",
+        "relevance": "same bounded framing/correction capability under a second task context",
+        "source_context_ref": "task:a",
+        "target_context_ref": "task:b"
+      }
+    ]
   },
   "contribution_a": {
     "actor_ref": "actor:human",
@@ -55,11 +78,31 @@
     "source_contribution_ref": "contrib:b",
     "target_ref": "activity:ai-assumption"
   },
+  "episode_a": {
+    "activities": [{"actor_ref": "actor:ai", "operation": "implemented_candidate"}],
+    "artifact_refs": ["artifact:a"],
+    "episode_id": "episode:a",
+    "happened_at": "2026-08-01T00:00:00Z",
+    "outcome_state": "REVIEWED",
+    "project_ref": "p:test",
+    "recorded_at": "2026-08-01T00:05:00Z",
+    "task_context_ref": "task:a"
+  },
+  "episode_b": {
+    "activities": [{"actor_ref": "actor:human", "operation": "corrected_assumption"}],
+    "artifact_refs": ["artifact:b"],
+    "episode_id": "episode:b",
+    "happened_at": "2026-08-10T00:00:00Z",
+    "outcome_state": "INDEPENDENTLY_ASSESSED",
+    "project_ref": "p:test",
+    "recorded_at": "2026-08-10T00:05:00Z",
+    "task_context_ref": "task:b"
+  },
   "evidence_scope": {
     "assessor_ref": "actor:evaluator",
     "claim_ceiling": "Evidence supports bounded task-level capability only",
     "covered_actions": ["frame", "correct"],
-    "covered_contexts": ["research_fixture_a", "research_fixture_b"],
+    "covered_contexts": ["task:a", "task:b"],
     "currentness": "current",
     "evidence_refs": ["evidence:task-brief", "evidence:review"],
     "evidence_scope_id": "scope:bounded-research",
@@ -68,40 +111,57 @@
     "observation_class": "artifact_and_review",
     "observed_at": "2026-08-10T00:10:00Z"
   },
-  "attestation": {
-    "attestation_id": "attestation:evaluator",
-    "attestor_ref": "actor:evaluator",
-    "claim_ceiling": "Attests only observed framing and correction",
-    "evidence_access": "inspected_source_artifacts_and_review_receipt",
+  "independent_assessment": {
+    "assessment_id": "assessment:independent-001",
+    "assessor_ref": "actor:evaluator",
+    "authority_effect": "none",
+    "capability_ref": "capability:bounded-research-direction",
+    "claim_ceiling": "Task-bounded framing and correction only",
+    "currentness": "current",
+    "evidence_refs": ["evidence:task-brief", "evidence:review"],
     "evidence_scope_refs": ["scope:bounded-research"],
     "independence": "independent",
-    "nonclaims": ["No mastery", "No general expertise", "No authority"],
+    "limitations": ["Two controlled fixtures only"],
+    "nonclaims": ["No mastery", "No authority"],
     "observation_scope": "two bounded research fixtures",
-    "relationship": "independent_evaluator",
+    "observed_at": "2026-08-10T00:10:00Z",
     "state": "active",
     "subject_ref": "actor:human"
   },
-  "capability_assertion": {
+  "proposed_capability_assertion": {
     "actor_ref": "actor:human",
-    "assertion_id": "assertion:bounded-research-direction",
+    "assertion_id": "assertion:proposed-bounded-research-direction",
     "attestation_refs": ["attestation:evaluator"],
+    "authority_effect": "none",
     "capability_ref": "capability:bounded-research-direction",
     "claim_ceiling": "Repeated bounded task-level framing and correction only",
     "claim_level": "task_bounded",
-    "claim_text": "Demonstrated bounded research-task framing and correction across two episodes.",
+    "claim_text": "Proposed bounded research-task framing and correction across two episodes.",
     "contribution_refs": ["contrib:a", "contrib:b"],
     "currentness": "current",
     "evidence_scope_refs": ["scope:bounded-research"],
     "independent_assessment_refs": ["assessment:independent-001"],
     "limitations": ["No mastery", "No cross-domain generalization"],
     "recurrence_count": 2,
+    "recurrence_episode_refs": ["episode:a", "episode:b"],
     "scope": "research software fixtures",
-    "state": "supported_bounded",
-    "transfer_contexts": ["research_fixture_b"]
+    "state": "proposed",
+    "transfer_evidence": [
+      {
+        "capability_ref": "capability:bounded-research-direction",
+        "evidence_refs": ["evidence:review"],
+        "evidence_scope_ref": "scope:bounded-research",
+        "relevance": "same bounded framing/correction capability under a second task context",
+        "source_context_ref": "task:a",
+        "target_context_ref": "task:b"
+      }
+    ]
   },
   "revocation_transition": {
     "assertion_ref": "assertion:bounded-research-direction",
     "authority_actor_ref": "actor:human",
+    "authority_basis_refs": ["evidence:revocation-request"],
+    "claim_ceiling": "Repeated bounded task-level framing and correction only",
     "claim_delta": "Remove the bounded assertion from active projection",
     "evidence_refs": ["evidence:revocation-request"],
     "from_state": "supported_bounded",
@@ -109,5 +169,18 @@
     "reason": "Subject withdrew the assertion pending fresh evidence",
     "to_state": "revoked",
     "transition_id": "transition:revoke-001"
+  },
+  "support_transition": {
+    "assertion_ref": "assertion:proposed-bounded-research-direction",
+    "authority_actor_ref": "actor:evaluator",
+    "authority_basis_refs": ["assessment:independent-001", "attestation:evaluator"],
+    "claim_ceiling": "Repeated bounded task-level framing and correction only",
+    "claim_delta": "Admit the bounded assertion after replaying all gates",
+    "evidence_refs": ["evidence:review"],
+    "from_state": "proposed",
+    "occurred_at": "2026-08-17T00:00:00Z",
+    "reason": "Independent admission gates passed",
+    "to_state": "supported_bounded",
+    "transition_id": "transition:support-001"
   }
 }
