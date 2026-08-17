@@ -1,0 +1,45 @@
+{
+  "schema_version": "gva06.f2.human-private-value-pilot-input.v1",
+  "programme_id": "GVA06.F2.open-work-semantics-mvp.v1",
+  "branch_id": "F2.W9.B1",
+  "project": {
+    "kind": "real_user_owned_programme",
+    "name": "GVA v0.6 F2 Open Work Semantics Stack",
+    "authoritative_sources": [
+      "GVA06_F2_W8_N3_RollingSynthesis_SteeringDecision(3).md",
+      "wave8(20260817-164730).zip",
+      "pakkinlau/ProjectionWorkbench@19cab543f1350a3fb51770745b68b91980ad4a03"
+    ],
+    "source_custody": "external_or_user_local",
+    "nontrivial": true
+  },
+  "declared_inquiry": "Create and execute the N2/N2B packet for the current next-wave branch 1 while keeping the handoff pointer-first and slim.",
+  "current_route": {
+    "wave": "F2.W9",
+    "branch": "F2.W9.B1",
+    "terminal_object": "HumanObservedPrivateValuePilot.v1",
+    "candidate_commit": "19cab543f1350a3fb51770745b68b91980ad4a03"
+  },
+  "observation": {
+    "task_declared_by_human": true,
+    "human_voluntarily_reopened_programme": true,
+    "pointer_first_constraint_declared_by_human": true,
+    "manual_baseline_recorded": false,
+    "manual_baseline_minutes": null,
+    "usefulness_confirmed_by_human": null,
+    "representation_useful_confirmed_by_human": null,
+    "reentry_better_than_baseline_confirmed_by_human": null,
+    "next_action_changed_confirmed_by_human": null,
+    "prior_history_reuse_confirmed_by_human": null,
+    "contribution_proposal_corrected_by_human": null,
+    "would_reopen_or_reuse_confirmed_by_human": null,
+    "capture_review_minutes": null,
+    "note": "A real user-owned project and real user-declared inquiry are bound, but no contemporaneous timed manual baseline or post-lens human confirmation is available inside this single execution turn."
+  },
+  "acceptance_policy": {
+    "maximum_capture_review_minutes": 10,
+    "require_manual_baseline": true,
+    "require_human_usefulness_confirmation": true,
+    "require_reentry_comparison": true
+  }
+}
