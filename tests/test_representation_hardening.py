@@ -2,7 +2,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from project_semantics import init_project, record_connector, record_module
+from project_semantics import init_project, load_project, save_project
 from project_semantics.representation import create_view_mapping, derive_lens
 
 
@@ -43,8 +43,10 @@ class RepresentationHardeningTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             init_project(root, project_id="p:integration", title="Integration")
-            record_module(root, module)
-            record_connector(root, connector)
+            project = load_project(root)
+            project["modules"] = [module]
+            project["connectors"] = [connector]
+            save_project(root, project)
             architecture = derive_lens(root, task, "architecture")
             reusable = derive_lens(root, task, "reusable_method")
             self.assertNotEqual(architecture["selected_objects"], reusable["selected_objects"])
