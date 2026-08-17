@@ -39,7 +39,7 @@ def run() -> dict:
         "cookery_regression": domains["cookery"]["passed"],
         "farming_regression": domains["farming"]["passed"],
         "event_spine_cutover_disabled": shadow["canonical_cutover_authorized"] is False,
-        "canonical_source_mutated": migration_receipt["canonical_source_mutated"] is False,
+        "canonical_source_not_mutated": migration_receipt["canonical_source_mutated"] is False,
     }
     return {"schema_version": "gva06.f2.w8.b2.integration-witness.v1", "checks": checks, "passed": all(checks.values()), "terminal": "POST_W7_EXCHANGE_DOMAIN_NEUTRAL_INTEGRATION_PASS" if all(checks.values()) else "REPAIR_REQUIRED", "claim_ceiling": "Controlled local integration mechanics only."}
 
