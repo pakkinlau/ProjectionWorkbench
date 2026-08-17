@@ -1,0 +1,52 @@
+name: F2 W7 B1 integrated candidate
+
+on:
+  push:
+    branches:
+      - agent/f2-w7-b1-integrated-core-shadow-spine
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Materialize the accepted W6 B3 source repair
+        run: |
+          if [ -d .integration_parts/f2_w6_b3 ]; then
+            cat .integration_parts/f2_w6_b3/source_ingestion.py.gz.b64.part-* | base64 --decode | gzip --decompress > src/project_semantics/source_ingestion.py
+            echo "02db35c3e80694ac884f339aca261aa4eed171f106a0129ee548a49daf00dfd9  src/project_semantics/source_ingestion.py" | sha256sum --check --strict
+            cat .integration_parts/f2_w6_b3/test_source_ingestion_generalization.py.gz.b64 | base64 --decode | gzip --decompress > tests/test_source_ingestion_generalization.py
+            echo "d3463272ccb7383694e4b813a4f36fcccb522aa0d2a5dcc999b542caa7a619df  tests/test_source_ingestion_generalization.py" | sha256sum --check --strict
+            rm -rf .integration_parts/f2_w6_b3
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add src/project_semantics/source_ingestion.py tests/test_source_ingestion_generalization.py .integration_parts
+            git commit -m "feat(f2): materialize W6 B3 source ingestion repair"
+            git push
+          fi
+      - name: Run complete unittest suite
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          PYTHONPATH=src python -m unittest discover -s tests -v 2>&1 | tee artifacts/unittest.log
+      - name: Replay privacy requalification explicitly
+        run: |
+          PYTHONPATH=src python scripts/run_f2_w6_b2_privacy_requalification.py --output artifacts/PrivacyPortabilityRepairRequalification.v1.json
+      - name: Build integrated terminal witness
+        run: |
+          PYTHONPATH=src python scripts/run_f2_w7_b1_integrated_assembly.py --output artifacts/IntegratedCoreRepairShadowSpineCandidate.v1.json
+      - name: Upload validation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: f2-w7-b1-validation
+          path: artifacts/
+          if-no-files-found: error
