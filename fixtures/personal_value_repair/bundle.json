@@ -1,0 +1,26 @@
+{
+  "project_id": "gva06.f2.open-work-semantics",
+  "title": "Open Work Semantics Stack personal-value repair fixture",
+  "canonical_location": "external://gva06/f2/current-project",
+  "recorded_at": "2026-08-17T00:00:00Z",
+  "observed_at": "2026-08-17T12:00:00Z",
+  "source_files": ["README.md", "state.json", "git_status.txt"],
+  "raw_markers": [
+    "RAW_PRIVATE_MARKER_README_7a13",
+    "RAW_PRIVATE_MARKER_JSON_91cc",
+    "RAW_PRIVATE_MARKER_GIT_449b"
+  ],
+  "max_confirmations": 2,
+  "expected_reentry": "Implement source-semantic ingestion and rerun the private-value dogfood against a minimal manual baseline.",
+  "task_context": {
+    "task_context_id": "task:f2-w4-b1-dogfood",
+    "goal": "Resume the project from current accepted evidence.",
+    "target_use": "private project reentry",
+    "claim_ceiling": "provisional local reentry only",
+    "questions": ["What should I do next?"],
+    "allowed_semantics": ["source-derived status", "source-derived blockers", "source-derived reentry"],
+    "forbidden_semantics": ["automatic authorship", "market demand", "human intent"],
+    "privacy_policy": "local_private_by_default",
+    "evaluator_or_success_conditions": ["exact source-derived reentry", "bounded confirmation burden"]
+  }
+}
