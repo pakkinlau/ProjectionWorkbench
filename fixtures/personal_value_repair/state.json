@@ -1,0 +1,14 @@
+{
+  "programme_id": "GVA06.F2.open-work-semantics-mvp.v1",
+  "status": "WAVE_3_COMPLETE_AS_EVIDENCE_WAVE__PRODUCT_FRONTIER_REQUIRES_BOUNDED_REPAIR",
+  "next_action": "Implement source-semantic ingestion and rerun the private-value dogfood against a minimal manual baseline.",
+  "blockers": [
+    "SOURCE_TO_SEMANTIC_INGESTION_ABSENT",
+    "HUMAN_USE_BEHAVIOR_UNOBSERVED"
+  ],
+  "claims": {
+    "private_value": "PRIVATE_VALUE_WEAK",
+    "hosted_platform_necessity": "NOT_SUPPORTED"
+  },
+  "raw_private_note": "RAW_PRIVATE_MARKER_JSON_91cc"
+}
