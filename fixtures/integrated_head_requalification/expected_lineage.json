@@ -1,0 +1,37 @@
+{
+  "schema_version": "gva06.f2.integrated-head-lineage-expected.v1",
+  "programme_id": "GVA06.F2.open-work-semantics-mvp.v1",
+  "branch_id": "F2.W8.B1",
+  "candidate": {
+    "repository": "pakkinlau/ProjectionWorkbench",
+    "pull_request": 17,
+    "branch": "agent/f2-w7-b1-integrated-core-shadow-spine",
+    "commit": "19478eda855d39d4a6477873e28bf0248e59a16f"
+  },
+  "predecessor_identities": {
+    "integrated_wave5_base": "35ff5610d6546cb65af4d475551aad0afac65219",
+    "contribution_repair": "979917f80c796dbcd88ebbf56bf3952aac5cfbf1",
+    "privacy_repair": "dfd12ba65cb521248c607c1bc865edb8c1bb47dc",
+    "source_ingestion_materialization": "50e135feb5a3157ffb8104d7452aa8f09f5b74fd",
+    "event_spine_shadow": "ed8ca19aec46f76a859bd626da59f6499e556357"
+  },
+  "candidate_blob_identities": {
+    "src/project_semantics/__init__.py": "0aa0337840a15feb3f247a57a9834848960ff614",
+    "src/project_semantics/contribution.py": "2f0529e7808498c55b0fc6c2c172b563d413c706",
+    "src/project_semantics/privacy_v2.py": "016d5a5d8c59b8b8b857b27d9871979ceebecdc7",
+    "src/project_semantics/source_ingestion.py": "71c9d28d8bc20c95961cc92cd40e869ab98085f1",
+    "src/project_semantics/event_spine.py": "4aba40b2e97f47350396a8dc343e2cad9df424f4"
+  },
+  "canonical_owners": {
+    "core": "project_semantics.__init__",
+    "contribution_evidence_capability": "project_semantics.contribution",
+    "privacy_portability_repair": "project_semantics.privacy_v2",
+    "source_ingestion": "project_semantics.source_ingestion",
+    "event_provenance_shadow": "project_semantics.event_spine"
+  },
+  "hard_invariants": {
+    "compatibility_model_remains_canonical": true,
+    "event_spine_cutover_authorized": false,
+    "canonical_history_rewritten": false
+  }
+}

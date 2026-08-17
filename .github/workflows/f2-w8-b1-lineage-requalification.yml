@@ -1,0 +1,81 @@
+name: F2 W8 B1 integrated-head requalification
+
+on:
+  push:
+    branches:
+      - agent/f2-w8-b1-integrated-head-lineage-requalification
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run complete clean-room repository suite
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          PYTHONPATH=src python -m unittest discover -s tests -v 2>&1 | tee artifacts/unittest.log
+
+      - name: Build exact-head lineage/currentness terminal
+        shell: bash
+        run: |
+          PYTHONPATH=src python scripts/run_f2_w8_b1_lineage_requalification.py \
+            --output artifacts/IntegratedHeadLineageCurrentnessRequalification.v1.json
+
+      - name: Record immutable qualification manifest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os, re, subprocess
+          from pathlib import Path
+
+          candidate = "19478eda855d39d4a6477873e28bf0248e59a16f"
+          log = Path("artifacts/unittest.log").read_text(encoding="utf-8")
+          match = re.search(r"Ran\s+(\d+)\s+tests", log)
+          terminal = json.loads(Path("artifacts/IntegratedHeadLineageCurrentnessRequalification.v1.json").read_text())
+          changed = subprocess.check_output(
+              ["git", "diff", "--name-only", f"{candidate}..HEAD"], text=True
+          ).splitlines()
+          commits = subprocess.check_output(
+              ["git", "rev-list", "--reverse", f"{candidate}..HEAD"], text=True
+          ).splitlines()
+          payload = {
+              "schema_version": "gva06.f2.current-head-lineage-manifest.v1",
+              "programme_id": "GVA06.F2.open-work-semantics-mvp.v1",
+              "branch_id": "F2.W8.B1",
+              "candidate_head": candidate,
+              "qualification_head": os.environ["GITHUB_SHA"],
+              "candidate_is_ancestor": terminal["checks"]["exact_candidate_is_ancestor"],
+              "candidate_blob_lineage_exact": terminal["checks"]["candidate_blob_lineage_exact"],
+              "changed_paths_after_candidate": changed,
+              "qualification_commits": commits,
+              "repository_tests": int(match.group(1)) if match else None,
+              "terminal": terminal["terminal"],
+              "passed": terminal["passed"],
+              "human_value_pilot_gate": terminal["human_value_pilot_gate"],
+              "event_spine_cutover_authorized": False,
+              "canonical_history_rewritten": False,
+          }
+          Path("artifacts/CurrentHeadLineageManifest.v1.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+          )
+          PY
+
+      - name: Upload qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: f2-w8-b1-lineage-requalification
+          path: artifacts/
+          if-no-files-found: error
