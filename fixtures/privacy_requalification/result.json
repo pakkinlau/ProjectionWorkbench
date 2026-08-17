@@ -1,0 +1,30 @@
+{
+  "claim_boundary": "Controlled local privacy/portability requalification only.",
+  "finding_count": 0,
+  "pass_count": 20,
+  "results": [
+    {"case_id": "RT01", "detail": "private values absent", "disposition": "PASS"},
+    {"case_id": "RT02", "detail": "private field names absent", "disposition": "PASS"},
+    {"case_id": "RT03", "detail": "private-only schema does not perturb public ID", "disposition": "PASS"},
+    {"case_id": "RT04", "detail": "stale mutable ref blocked", "disposition": "PASS"},
+    {"case_id": "RT05", "detail": "local-only unresolved ref cannot exchange", "disposition": "PASS"},
+    {"case_id": "RT06", "detail": "revocation monotone", "disposition": "PASS"},
+    {"case_id": "RT07", "detail": "tombstone terminal", "disposition": "PASS"},
+    {"case_id": "RT08", "detail": "revoked export metadata-only", "disposition": "PASS"},
+    {"case_id": "RT09", "detail": "traversal blocked", "disposition": "PASS"},
+    {"case_id": "RT10", "detail": "symlink blocked", "disposition": "PASS"},
+    {"case_id": "RT11", "detail": "unmanifested resource blocked", "disposition": "PASS"},
+    {"case_id": "RT12", "detail": "deep manifest blocked", "disposition": "PASS"},
+    {"case_id": "RT13", "detail": "payload tamper blocked", "disposition": "PASS"},
+    {"case_id": "RT14", "detail": "manifest metadata tamper blocked", "disposition": "PASS"},
+    {"case_id": "RT15", "detail": "schema confusion blocked", "disposition": "PASS"},
+    {"case_id": "RT16", "detail": "duplicate path blocked", "disposition": "PASS"},
+    {"case_id": "RT17", "detail": "past expiry enforced", "disposition": "PASS"},
+    {"case_id": "RT18", "detail": "forged ID blocked", "disposition": "PASS"},
+    {"case_id": "RT19", "detail": "non-finite JSON blocked", "disposition": "PASS"},
+    {"case_id": "RT20", "detail": "clean-room digest preserved", "disposition": "PASS"}
+  ],
+  "schema_version": "gva06.f2.privacy-portability-requalification.v1",
+  "terminal": "QUALIFIED_AT_CONTROLLED_LOCAL_CEILING",
+  "test_count": 20
+}
