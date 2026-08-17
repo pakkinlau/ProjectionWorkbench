@@ -1,0 +1,36 @@
+name: F2 W9 B1 human private-value pilot
+
+on:
+  push:
+    branches:
+      - agent/f2-w9-b1-human-observed-private-value-pilot
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run complete repository suite
+        run: |
+          set -o pipefail
+          PYTHONPATH=src:. python -m unittest discover -s tests -v 2>&1 | tee unittest.log
+      - name: Execute bounded human private-value pilot
+        run: |
+          mkdir -p out
+          PYTHONPATH=src:. python scripts/run_f2_w9_b1_human_private_value_pilot.py \
+            --input fixtures/human_private_value_pilot/pilot.json \
+            --output out/HumanObservedPrivateValuePilot.v1.json
+      - name: Upload pilot evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: f2-w9-b1-human-private-value-pilot
+          path: |
+            out/HumanObservedPrivateValuePilot.v1.json
+            unittest.log
+            fixtures/human_private_value_pilot/pilot.json
+            docs/f2_w9_b1_human_observed_private_value_pilot.md
+            receipts/f2_w9_b1_execution_receipt.md
