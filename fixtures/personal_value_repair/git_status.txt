@@ -1,0 +1,4 @@
+On branch agent/f2-w2-open-work-kernel-v0
+nothing to commit, working tree clean
+Pinned predecessor: e52bd80249e89741998ddf4faea974082acf629a
+RAW_PRIVATE_MARKER_GIT_449b

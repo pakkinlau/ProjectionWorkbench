@@ -1,0 +1,113 @@
+{
+  "episode_a": {
+    "activities": [{"actor_ref": "actor:ai", "operation": "implemented_candidate"}],
+    "artifact_refs": ["artifact:a"],
+    "episode_id": "episode:a",
+    "happened_at": "2026-08-01T00:00:00Z",
+    "outcome_state": "REVIEWED",
+    "project_ref": "p:test",
+    "recorded_at": "2026-08-01T00:05:00Z",
+    "task_context_ref": "task:a"
+  },
+  "episode_b": {
+    "activities": [{"actor_ref": "actor:human", "operation": "corrected_assumption"}],
+    "artifact_refs": ["artifact:b"],
+    "episode_id": "episode:b",
+    "happened_at": "2026-08-10T00:00:00Z",
+    "outcome_state": "INDEPENDENTLY_ASSESSED",
+    "project_ref": "p:test",
+    "recorded_at": "2026-08-10T00:05:00Z",
+    "task_context_ref": "task:b"
+  },
+  "contribution_a": {
+    "actor_ref": "actor:human",
+    "assertion_state": "human_confirmed",
+    "claim_ceiling": "Human framed the bounded task only",
+    "contribution_id": "contrib:a",
+    "contribution_mode": "human_directed_ai_executed",
+    "contribution_role": "frame",
+    "episode_ref": "episode:a",
+    "evidence_refs": ["evidence:task-brief"],
+    "origin": "human",
+    "scope": "framed objective and constraints",
+    "source_refs": ["source:brief"]
+  },
+  "contribution_b": {
+    "actor_ref": "actor:human",
+    "assertion_state": "independently_assessed",
+    "claim_ceiling": "Human corrected one invalid assumption",
+    "contribution_id": "contrib:b",
+    "contribution_mode": "human_directed_ai_executed",
+    "contribution_role": "correct",
+    "episode_ref": "episode:b",
+    "evidence_refs": ["evidence:review"],
+    "origin": "human",
+    "scope": "identified and corrected leakage assumption",
+    "source_refs": ["source:review"]
+  },
+  "correction_relation": {
+    "actor_ref": "actor:human",
+    "claim_ceiling": "One observed correction relation",
+    "evidence_refs": ["evidence:review"],
+    "relation_id": "relation:correction",
+    "relation_type": "human_corrected_ai_assumption",
+    "scope": "corrected invalid leakage assumption",
+    "source_contribution_ref": "contrib:b",
+    "target_ref": "activity:ai-assumption"
+  },
+  "evidence_scope": {
+    "assessor_ref": "actor:evaluator",
+    "claim_ceiling": "Evidence supports bounded task-level capability only",
+    "covered_actions": ["frame", "correct"],
+    "covered_contexts": ["research_fixture_a", "research_fixture_b"],
+    "currentness": "current",
+    "evidence_refs": ["evidence:task-brief", "evidence:review"],
+    "evidence_scope_id": "scope:bounded-research",
+    "independence": "independent",
+    "limitations": ["No mastery claim", "No authority claim"],
+    "observation_class": "artifact_and_review",
+    "observed_at": "2026-08-10T00:10:00Z"
+  },
+  "attestation": {
+    "attestation_id": "attestation:evaluator",
+    "attestor_ref": "actor:evaluator",
+    "claim_ceiling": "Attests only observed framing and correction",
+    "evidence_access": "inspected_source_artifacts_and_review_receipt",
+    "evidence_scope_refs": ["scope:bounded-research"],
+    "independence": "independent",
+    "nonclaims": ["No mastery", "No general expertise", "No authority"],
+    "observation_scope": "two bounded research fixtures",
+    "relationship": "independent_evaluator",
+    "state": "active",
+    "subject_ref": "actor:human"
+  },
+  "capability_assertion": {
+    "actor_ref": "actor:human",
+    "assertion_id": "assertion:bounded-research-direction",
+    "attestation_refs": ["attestation:evaluator"],
+    "capability_ref": "capability:bounded-research-direction",
+    "claim_ceiling": "Repeated bounded task-level framing and correction only",
+    "claim_level": "task_bounded",
+    "claim_text": "Demonstrated bounded research-task framing and correction across two episodes.",
+    "contribution_refs": ["contrib:a", "contrib:b"],
+    "currentness": "current",
+    "evidence_scope_refs": ["scope:bounded-research"],
+    "independent_assessment_refs": ["assessment:independent-001"],
+    "limitations": ["No mastery", "No cross-domain generalization"],
+    "recurrence_count": 2,
+    "scope": "research software fixtures",
+    "state": "supported_bounded",
+    "transfer_contexts": ["research_fixture_b"]
+  },
+  "revocation_transition": {
+    "assertion_ref": "assertion:bounded-research-direction",
+    "authority_actor_ref": "actor:human",
+    "claim_delta": "Remove the bounded assertion from active projection",
+    "evidence_refs": ["evidence:revocation-request"],
+    "from_state": "supported_bounded",
+    "occurred_at": "2026-08-17T00:00:00Z",
+    "reason": "Subject withdrew the assertion pending fresh evidence",
+    "to_state": "revoked",
+    "transition_id": "transition:revoke-001"
+  }
+}
