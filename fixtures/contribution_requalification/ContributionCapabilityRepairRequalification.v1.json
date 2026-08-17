@@ -1,0 +1,24 @@
+{
+  "case_count": 12,
+  "cases": [
+    {"case_id":"RT-01","detail":"assertion transition authority actor is not bound","expected":"BLOCK","family":"transition bypass","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-02","detail":"recurrence_count must equal bound recurrence episode identities","expected":"BLOCK","family":"recurrence laundering","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-03","detail":"attestation relationship is not independently scoped","expected":"BLOCK","family":"collusive attestation","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-04","detail":"supported capability requires current independent evidence scope","expected":"BLOCK","family":"stale evidence drift","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-05","detail":"transfer evidence contexts are not bound to recurrence episodes","expected":"BLOCK","family":"irrelevant transfer","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-06","detail":"supported capability requires active independent attestation","expected":"BLOCK","family":"revoked attestation","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-07","detail":"operation completed","expected":"ALLOW","family":"superseded exclusion","observed":"ALLOW","policy_match":true},
+    {"case_id":"RT-08","detail":"attestation subject mismatch","expected":"BLOCK","family":"subject mismatch","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-09","detail":"capability assertion references unknown independent assessments: assessment:unbound","expected":"BLOCK","family":"unbound assessment","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-10","detail":"mastery/expertise and unsupported capability levels are forbidden","expected":"BLOCK","family":"mastery level","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-11","detail":"CapabilityAssertion requires non-empty list: contribution_refs, evidence_scope_refs, attestation_refs, independent_assessment_refs, recurrence_episode_refs, transfer_evidence","expected":"BLOCK","family":"empty direct support","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-12","detail":"self-attestation must declare self independence","expected":"BLOCK","family":"self-attestation mismatch","observed":"BLOCK","policy_match":true}
+  ],
+  "claim_boundary": "Controlled local semantic requalification only.",
+  "false_accepts": 0,
+  "false_rejects": 0,
+  "policy_matches": 12,
+  "schema_version": "gva06.f2.contribution-capability-repair-requalification.v1",
+  "terminal": "PASS",
+  "terminal_object": "ContributionCapabilityRepairRequalification.v1"
+}
