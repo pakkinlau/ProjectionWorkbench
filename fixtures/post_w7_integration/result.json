@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "canonical_source_not_mutated": true,
+    "cookery_regression": true,
+    "event_spine_cutover_disabled": true,
+    "exchange_interoperable": true,
+    "farming_regression": true,
+    "round_trip_equal": true
+  },
+  "claim_ceiling": "Controlled local integration mechanics only.",
+  "passed": true,
+  "schema_version": "gva06.f2.w8.b2.integration-witness.v1",
+  "terminal": "POST_W7_EXCHANGE_DOMAIN_NEUTRAL_INTEGRATION_PASS"
+}

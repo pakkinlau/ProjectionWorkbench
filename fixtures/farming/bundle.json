@@ -1,0 +1,31 @@
+{
+  "shared_core": {"types": ["resource", "process", "context", "result"], "version": "neutral-core.v1"},
+  "domain_chart": {
+    "domain_id": "farming",
+    "shared_core_version": "neutral-core.v1",
+    "local_types": [
+      {"local_type": "seed_lot", "loss_if_globalized": false},
+      {"local_type": "cultivation_action", "loss_if_globalized": false},
+      {"local_type": "field_memory", "requires_extension": true, "loss_if_globalized": true},
+      {"local_type": "season_context", "loss_if_globalized": true}
+    ],
+    "protected_distinctions": [{"left": "seed_lot", "right": "season_context", "reason": "material input and temporal context are not interchangeable"}],
+    "claim_ceiling": "bounded farming chart mechanics only",
+    "execution_envelope": {
+      "schema_version": "project-semantics.domain-execution-envelope.v1",
+      "witness_id": "F2.W8.B2.farming-regression.v1",
+      "supported": ["shared core plus local extension"],
+      "not_supported": ["agronomic authority", "universal ontology"],
+      "receipt_nonclaims": ["no domain adequacy", "no human skill inference"]
+    }
+  },
+  "primary_case_id": "farming-primary",
+  "cases": [
+    {"case_id": "farming-primary", "mode": "mapping", "proposed_mappings": [{"local_type": "seed_lot", "target_type": "resource"}, {"local_type": "cultivation_action", "target_type": "process"}], "preserve_local_types": true, "claim_ceiling": "bounded", "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION"},
+    {"case_id": "unsafe-context-plan-collapse", "mode": "mapping", "proposed_mappings": [{"local_type": "seed_lot", "target_type": "resource"}, {"local_type": "season_context", "target_type": "resource"}], "claim_ceiling": "bounded", "expected_disposition": "NO_SAFE_GLOBALIZATION"},
+    {"case_id": "ambiguous-yield-term", "mode": "ambiguous_mapping", "candidate_targets": [{"target_type": "context"}, {"target_type": "result"}], "claim_ceiling": "bounded", "expected_disposition": "NON_IDENTIFIABLE"},
+    {"case_id": "tacit-field-memory-gap", "mode": "grammar_probe", "proposed_mappings": [], "claim_ceiling": "bounded", "expected_disposition": "GRAMMAR_INSUFFICIENT"},
+    {"case_id": "neutral-core-probe", "mode": "core_specificity_probe", "required_neutral_roles": ["resource", "process", "context", "result"], "claim_ceiling": "bounded", "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION"},
+    {"case_id": "unknown-symbol", "mode": "mapping", "proposed_mappings": [{"local_type": "unknown_local", "target_type": "resource"}], "claim_ceiling": "bounded", "expected_disposition": "GRAMMAR_INSUFFICIENT"}
+  ]
+}

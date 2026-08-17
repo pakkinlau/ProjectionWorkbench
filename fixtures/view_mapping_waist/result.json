@@ -1,0 +1,84 @@
+{
+  "adapter_receipt": {
+    "adapter_version": "native-view-mapping-to-exchange.v1",
+    "canonical_source_mutated": false,
+    "claim_ceiling": "Adapter mechanics only; not semantic equivalence or admission.",
+    "identity_preserved": true,
+    "information_loss": [],
+    "receipt_id": "sha256:a0dbb0b09678acaf8001f37595c69dfcfe0c6b7ca87af33ae740cacc83107123",
+    "schema_version": "project-semantics.view-mapping-adapter-receipt.v1",
+    "source_identity": "mapping:879290730d49ff657cf5962f",
+    "source_schema_version": "project-semantics.view-mapping-receipt.v1",
+    "target_identity": "mapping:879290730d49ff657cf5962f",
+    "target_schema_version": "project-semantics.view-mapping-receipt.v2"
+  },
+  "bridge_receipt": {
+    "bridge_kind": "PRIVACY_EXPORT_TO_SEMANTIC_EXCHANGE_POINTER",
+    "canonical_source_mutated": false,
+    "claim_ceiling": "Typed bridge only; privacy export is not exchange admission.",
+    "currentness_policy": "RECHECK_BEFORE_EXCHANGE",
+    "information_loss": ["private payload omitted"],
+    "payload_relabelled": false,
+    "receipt_id": "sha256:9d4df6a3e28b5cabb18f44d2a8209ba3496754aa667fdf2bfa1cbe9a6013e130",
+    "schema_version": "project-semantics.exchange-waist-bridge.v1",
+    "security_policy": "VERIFY_BOTH_MANIFESTS",
+    "source_manifest_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_manifest_schema": "project-semantics.export.v1",
+    "target_manifest_digest": "sha256:9c34c527345fa04661ac874da8005b007a2a278b766efe77b8dafc8841b48658",
+    "target_manifest_schema": "project-semantics.exchange-manifest.v2"
+  },
+  "case_count": 13,
+  "cases": [
+    {"case_id": "RT01", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT02", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT03", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT04", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT05", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT06", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT07", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT08", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT09", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT10", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT11", "expected": "PASS", "observed": "PASS", "policy_match": true},
+    {"case_id": "RT12", "expected": "FAIL", "observed": "FAIL", "policy_match": true},
+    {"case_id": "RT13", "expected": "PASS", "observed": "PASS", "policy_match": true}
+  ],
+  "claim_boundary": "Controlled local mapping/exchange-waist mechanics only.",
+  "failed": 0,
+  "migration_receipt": {
+    "canonical_source_mutated": false,
+    "claim_ceiling": "Local migration/exchange mechanics only.",
+    "disposition": "MIGRATED_LOSSLESSLY",
+    "mapping_adapter_receipts": [
+      {
+        "adapter_version": "native-view-mapping-to-exchange.v1",
+        "canonical_source_mutated": false,
+        "claim_ceiling": "Adapter mechanics only; not semantic equivalence or admission.",
+        "identity_preserved": true,
+        "information_loss": [],
+        "receipt_id": "sha256:a0dbb0b09678acaf8001f37595c69dfcfe0c6b7ca87af33ae740cacc83107123",
+        "schema_version": "project-semantics.view-mapping-adapter-receipt.v1",
+        "source_identity": "mapping:879290730d49ff657cf5962f",
+        "source_schema_version": "project-semantics.view-mapping-receipt.v1",
+        "target_identity": "mapping:879290730d49ff657cf5962f",
+        "target_schema_version": "project-semantics.view-mapping-receipt.v2"
+      }
+    ],
+    "provenance_preserved": true,
+    "receipt_id": "sha256:70ad08dcf8e7f8a8b4f27ebcf467deb3d54ec4bf1f92dc4daee172d66e10f463",
+    "revalidation": {
+      "checks": {
+        "attestation:attestation:independent-001:scope_bound": true,
+        "connector:connector:evidence-to-audit:conformant": true,
+        "mapping:mapping:879290730d49ff657cf5962f:conformant": true
+      },
+      "disposition": "INTEROPERABLE"
+    },
+    "schema_version": "project-semantics.native-exchange-migration-receipt.v1",
+    "source_bundle_digest": "sha256:a49d671c5e14a4aaa3ab2f40030d58398d63facbb3aa8ffa597e0f19413652a1",
+    "target_bundle_digest": "sha256:9f5c132a80f2833fc3a7e39243649f0191565dcb49b638ed0da8ac7d89318dac"
+  },
+  "passed": 13,
+  "schema_version": "gva06.f2.w7.b2.repair-witness.v1",
+  "terminal": "VIEW_MAPPING_AND_EXCHANGE_WAIST_REPAIR_PASS"
+}

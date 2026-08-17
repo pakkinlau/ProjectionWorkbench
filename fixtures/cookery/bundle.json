@@ -1,0 +1,30 @@
+{
+  "shared_core": {"types": ["resource", "process", "context", "result"], "version": "neutral-core.v1"},
+  "domain_chart": {
+    "domain_id": "cookery",
+    "shared_core_version": "neutral-core.v1",
+    "local_types": [
+      {"local_type": "ingredient", "loss_if_globalized": false},
+      {"local_type": "preparation", "loss_if_globalized": false},
+      {"local_type": "sensory_judgment", "requires_extension": true, "loss_if_globalized": true},
+      {"local_type": "service_context", "loss_if_globalized": true}
+    ],
+    "protected_distinctions": [{"left": "ingredient", "right": "service_context", "reason": "resource and social context are not interchangeable"}],
+    "claim_ceiling": "bounded cookery chart mechanics only",
+    "execution_envelope": {
+      "schema_version": "project-semantics.domain-execution-envelope.v1",
+      "witness_id": "F2.W8.B2.cookery-regression.v1",
+      "supported": ["shared core plus local extension"],
+      "not_supported": ["culinary authority", "universal ontology"],
+      "receipt_nonclaims": ["no domain adequacy", "no human skill inference"]
+    }
+  },
+  "primary_case_id": "cookery-primary",
+  "cases": [
+    {"case_id": "cookery-primary", "mode": "mapping", "proposed_mappings": [{"local_type": "ingredient", "target_type": "resource"}, {"local_type": "preparation", "target_type": "process"}], "preserve_local_types": true, "claim_ceiling": "bounded", "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION"},
+    {"case_id": "unsafe-resource-collapse", "mode": "mapping", "proposed_mappings": [{"local_type": "ingredient", "target_type": "resource"}, {"local_type": "service_context", "target_type": "resource"}], "claim_ceiling": "bounded", "expected_disposition": "NO_SAFE_GLOBALIZATION"},
+    {"case_id": "ambiguous-service-term", "mode": "ambiguous_mapping", "candidate_targets": [{"target_type": "context"}, {"target_type": "result"}], "claim_ceiling": "bounded", "expected_disposition": "NON_IDENTIFIABLE"},
+    {"case_id": "tacit-aroma-grammar-gap", "mode": "grammar_probe", "proposed_mappings": [], "claim_ceiling": "bounded", "expected_disposition": "GRAMMAR_INSUFFICIENT"},
+    {"case_id": "neutral-core-probe", "mode": "core_specificity_probe", "required_neutral_roles": ["resource", "process", "context", "result"], "claim_ceiling": "bounded", "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION"}
+  ]
+}
