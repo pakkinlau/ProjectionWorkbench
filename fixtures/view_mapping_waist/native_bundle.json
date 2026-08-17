@@ -1,0 +1,115 @@
+{
+  "bundle_id": "fixture:f2-w7-b2:native",
+  "provenance": {
+    "integrated_candidate": "35ff5610d6546cb65af4d475551aad0afac65219",
+    "migration_candidate": "dac5ba1f49056dad5d4273e1d53c25bcea73eccd",
+    "source_wave": "F2.W7"
+  },
+  "records": [
+    {
+      "kind": "WorkModuleManifest",
+      "payload": {
+        "attribution": {"contributors": ["actor:alice"]},
+        "claim_ceiling": "mechanics only",
+        "evidence_policy": {"emit_receipt": true},
+        "inputs": [{"type": "source_bundle.v1"}],
+        "module_id": "module:evidence-graph",
+        "outputs": [{"type": "evidence_graph.v1"}],
+        "permissions": {"allow_composition": true},
+        "semantic_contract": {"purpose": "source-bound graph"},
+        "version": "1.0.0"
+      }
+    },
+    {
+      "kind": "WorkModuleManifest",
+      "payload": {
+        "attribution": {"contributors": ["actor:bob"]},
+        "claim_ceiling": "mechanics only",
+        "evidence_policy": {"emit_receipt": true},
+        "inputs": [{"type": "audit_graph.v2"}],
+        "module_id": "module:claim-audit",
+        "outputs": [{"type": "claim_audit.v1"}],
+        "permissions": {"allow_composition": true},
+        "semantic_contract": {"purpose": "bounded audit"},
+        "version": "2.0.0"
+      }
+    },
+    {
+      "kind": "ConnectorManifest",
+      "payload": {
+        "accepted_source_versions": ["1.0.0"],
+        "accepted_target_versions": ["2.0.0"],
+        "attribution_policy": {"preserve_lineage": true},
+        "claim_ceiling": "mechanics only",
+        "connector_id": "connector:evidence-to-audit",
+        "evidence_continuity": {"preserve_source_refs": true},
+        "permissions": {"allow_use": true},
+        "semantic_mapping": {
+          "correspondences": [["claim", "claim"]],
+          "preserved_invariants": ["source provenance"]
+        },
+        "source_type": "evidence_graph.v1",
+        "target_type": "audit_graph.v2",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "kind": "ViewMappingReceipt",
+      "payload": {
+        "disposition": "PARTIAL_MAPPING_WITH_DECLARED_LOSS",
+        "information_loss": ["connector:evidence-to-audit"],
+        "mapping_id": "mapping:879290730d49ff657cf5962f",
+        "obstruction": null,
+        "schema_version": "project-semantics.view-mapping-receipt.v1",
+        "shared_refs": ["module:evidence-graph"],
+        "source_lens_ref": "lens:architecture",
+        "target_lens_ref": "lens:reusable-method"
+      }
+    },
+    {
+      "kind": "EvidenceScope",
+      "payload": {
+        "assessor_ref": "actor:evaluator",
+        "claim_ceiling": "bounded",
+        "covered_actions": ["frame"],
+        "covered_contexts": ["fixture"],
+        "currentness": "current",
+        "evidence_refs": ["evidence:frame"],
+        "evidence_scope_id": "scope:independent-001",
+        "independence": "independent",
+        "limitations": [],
+        "observation_class": "bounded",
+        "observed_at": "2026-08-17T00:00:00Z"
+      }
+    },
+    {
+      "kind": "Attestation",
+      "payload": {
+        "attestation_id": "attestation:independent-001",
+        "attestor_ref": "actor:evaluator",
+        "claim_ceiling": "bounded",
+        "evidence_access": "direct",
+        "evidence_scope_refs": ["scope:independent-001"],
+        "independence": "independent",
+        "nonclaims": ["no mastery"],
+        "observation_scope": "frame",
+        "relationship": "independent evaluator",
+        "state": "active",
+        "subject_ref": "actor:human"
+      }
+    },
+    {
+      "kind": "CompositionReceipt",
+      "payload": {
+        "claim_ceiling": "mechanics only",
+        "connector": {"id": "connector:evidence-to-audit"},
+        "disposition": "COMPOSED",
+        "gate_results": {"all": true},
+        "module_a": {"id": "module:evidence-graph"},
+        "module_b": {"id": "module:claim-audit"},
+        "receipt_id": "composition:independent-001"
+      }
+    }
+  ],
+  "schema_version": "project-semantics.exchange-bundle.native-v1"
+}
