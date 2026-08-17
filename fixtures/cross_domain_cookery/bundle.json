@@ -1,0 +1,194 @@
+{
+  "shared_core": {
+    "schema_version": "neutral-semantic-core.v1",
+    "types": [
+      "Actor",
+      "SourceRef",
+      "Work",
+      "Project",
+      "ActivityRecord",
+      "EvidenceRef",
+      "ArtifactRef",
+      "RelationshipRecord",
+      "Assertion",
+      "Context",
+      "Policy",
+      "Projection"
+    ]
+  },
+  "domain_chart": {
+    "domain_id": "cookery.home-kitchen.v1",
+    "shared_core_version": "neutral-semantic-core.v1",
+    "local_types": [
+      {
+        "local_type": "ingredient_batch",
+        "description": "A provenance-bearing batch of ingredients"
+      },
+      {
+        "local_type": "recipe_version",
+        "description": "A versioned recipe or method"
+      },
+      {
+        "local_type": "preparation_step",
+        "description": "One bounded preparation action"
+      },
+      {
+        "local_type": "sensory_observation",
+        "description": "Taste, aroma, texture, or visual observation",
+        "loss_if_globalized": true
+      },
+      {
+        "local_type": "thermal_measurement",
+        "description": "Instrument-measured temperature/time observation",
+        "loss_if_globalized": true
+      },
+      {
+        "local_type": "utensil",
+        "description": "A tool used during preparation",
+        "loss_if_globalized": true
+      },
+      {
+        "local_type": "service_context",
+        "description": "The meal/service situation"
+      },
+      {
+        "local_type": "allergen_constraint",
+        "description": "A safety and disclosure constraint"
+      },
+      {
+        "local_type": "embodied_aroma_memory",
+        "description": "Tacit comparison with remembered aroma profiles",
+        "requires_extension": true,
+        "loss_if_globalized": true
+      }
+    ],
+    "protected_distinctions": [
+      {
+        "left": "ingredient_batch",
+        "right": "utensil",
+        "reason": "Consumable ingredient provenance and reusable tool identity must not collapse into one generic artifact role"
+      },
+      {
+        "left": "sensory_observation",
+        "right": "thermal_measurement",
+        "reason": "Human sensory judgment and instrument measurement have different evidence and uncertainty semantics"
+      },
+      {
+        "left": "recipe_version",
+        "right": "service_context",
+        "reason": "A method/version is not the situation in which it is enacted"
+      }
+    ],
+    "claim_ceiling": "Bounded cookery chart pressure only; no culinary adequacy, expertise, or universal semantics."
+  },
+  "primary_case_id": "safe-shared-plus-local",
+  "cases": [
+    {
+      "case_id": "safe-shared-plus-local",
+      "mode": "mapping",
+      "proposed_mappings": [
+        {
+          "local_type": "ingredient_batch",
+          "target_type": "SourceRef"
+        },
+        {
+          "local_type": "recipe_version",
+          "target_type": "Work"
+        },
+        {
+          "local_type": "preparation_step",
+          "target_type": "ActivityRecord"
+        },
+        {
+          "local_type": "sensory_observation",
+          "target_type": "EvidenceRef"
+        },
+        {
+          "local_type": "thermal_measurement",
+          "target_type": "EvidenceRef"
+        },
+        {
+          "local_type": "service_context",
+          "target_type": "Context"
+        },
+        {
+          "local_type": "allergen_constraint",
+          "target_type": "Policy"
+        }
+      ],
+      "preserve_local_types": true,
+      "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION",
+      "claim_ceiling": "Shared structural roles plus explicit cookery-local extensions only."
+    },
+    {
+      "case_id": "unsafe-resource-collapse",
+      "mode": "mapping",
+      "proposed_mappings": [
+        {
+          "local_type": "ingredient_batch",
+          "target_type": "ArtifactRef"
+        },
+        {
+          "local_type": "utensil",
+          "target_type": "ArtifactRef"
+        }
+      ],
+      "expected_disposition": "NO_SAFE_GLOBALIZATION",
+      "claim_ceiling": "Negative role-collision witness only."
+    },
+    {
+      "case_id": "ambiguous-service-term",
+      "mode": "ambiguous_mapping",
+      "local_type": "service",
+      "candidate_targets": [
+        {
+          "target_type": "Work"
+        },
+        {
+          "target_type": "ActivityRecord"
+        },
+        {
+          "target_type": "Context"
+        }
+      ],
+      "discriminators": [],
+      "expected_disposition": "NON_IDENTIFIABLE",
+      "claim_ceiling": "Ambiguity witness only; no automatic disambiguation."
+    },
+    {
+      "case_id": "tacit-aroma-grammar-gap",
+      "mode": "grammar_probe",
+      "proposed_mappings": [
+        {
+          "local_type": "recipe_version",
+          "target_type": "Work"
+        }
+      ],
+      "expected_disposition": "GRAMMAR_INSUFFICIENT",
+      "claim_ceiling": "Grammar-gap witness only."
+    },
+    {
+      "case_id": "software-core-pressure",
+      "mode": "core_specificity_probe",
+      "required_neutral_roles": [
+        "Actor",
+        "SourceRef",
+        "Work",
+        "ActivityRecord",
+        "EvidenceRef",
+        "Context",
+        "Policy"
+      ],
+      "software_specific_markers": [
+        "Repository",
+        "Commit",
+        "PullRequest",
+        "TestRun",
+        "Deployment"
+      ],
+      "software_density_threshold": 0.5,
+      "expected_disposition": "SHARED_CORE_PLUS_LOCAL_EXTENSION",
+      "claim_ceiling": "Neutral-core control case only."
+    }
+  ]
+}
