@@ -1,0 +1,81 @@
+{
+  "schema_version": "project-semantics.independent-event-spine-shadow-qualification.v1",
+  "programme_id": "GVA06.F2.open-work-semantics-mvp.v1",
+  "wave_id": "F2.W7",
+  "branch_id": "F2.W7.B4",
+  "terminal": "KEEP_CURRENT_COMPATIBILITY_MODEL",
+  "case_count": 16,
+  "policy_matches": 9,
+  "findings": 7,
+  "critical_findings": 1,
+  "high_findings": 5,
+  "first_zero": "ES09",
+  "supported": [
+    "content-bound event identity and payload tamper detection",
+    "strict order and duplicate rejection inside one supplied ledger",
+    "deterministic bounded reducer replay",
+    "bounded v0 parity fixture",
+    "prefix rollback to a compatibility state",
+    "fail-closed unknown event and schema-version behavior"
+  ],
+  "findings_summary": [
+    {
+      "case_id": "ES09",
+      "family": "cross_stream_injection",
+      "severity": "high",
+      "result": "accepted",
+      "repair": "bind each ledger to one stream_id or explicitly model cross-stream envelopes"
+    },
+    {
+      "case_id": "ES10",
+      "family": "event_payload_schema",
+      "severity": "high",
+      "result": "accepted",
+      "repair": "validate event-type-specific payload schemas before ledger admission"
+    },
+    {
+      "case_id": "ES11",
+      "family": "transition_authority_and_from_state",
+      "severity": "critical",
+      "result": "revoked contribution resurrected into CurrentCapabilityProjection",
+      "repair": "replay governed transitions with from-state, authority, evidence, claim-ceiling and currentness gates"
+    },
+    {
+      "case_id": "ES12",
+      "family": "snapshot_expiry_enforcement",
+      "severity": "high",
+      "result": "expired view remains labelled source_bound_shadow_snapshot",
+      "repair": "enforce expiry/currentness at view use time"
+    },
+    {
+      "case_id": "ES13",
+      "family": "source_horizon_continuity",
+      "severity": "high",
+      "result": "unrelated source horizon accepted",
+      "repair": "bind source horizons to observed source events and current content identities"
+    },
+    {
+      "case_id": "ES14",
+      "family": "concurrent_writer_fork",
+      "severity": "high",
+      "result": "two valid forks from one parent have no conflict disposition",
+      "repair": "define optimistic concurrency, fork detection and merge/rollback semantics"
+    },
+    {
+      "case_id": "ES15",
+      "family": "recording_chronology",
+      "severity": "medium",
+      "result": "recorded_at earlier than happened_at accepted",
+      "repair": "enforce chronology or declare lawful exception semantics"
+    }
+  ],
+  "canonical_cutover_recommendation": "DO_NOT_CUT_OVER",
+  "validation": {
+    "command": "PYTHONPATH=src:. python -m unittest tests/test_independent_event_spine_shadow_qualification.py -v",
+    "tests": "10/10 PASS",
+    "qualification_cases": "16",
+    "expected_policy_matches": "9/16",
+    "independent_findings": "7"
+  },
+  "claim_ceiling": "Independent controlled semantic qualification of one shadow implementation only; no production event-store, migration, concurrency, security, historical-completeness, release or cutover claim."
+}
