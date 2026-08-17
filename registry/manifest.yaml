@@ -1,18 +1,28 @@
 repo_id: projectionworkbench
 repo_name: ProjectionWorkbench
 github_repo: pakkinlau/ProjectionWorkbench
-status: gva_v0_3_incubation_candidate
-gva_version_basis: "0.3"
-gva_version_status: guarded_design_snapshot
+status: gva_v0_6_f2_local_first_witness_candidate
+historical_basis:
+  - gva_v0_3_projection_compiler_incubation
+current_programme: GVA06.F2.open-work-semantics-mvp.v1
+current_wave_branch: F2.W2.K1
 canonical_surfaces:
-  - docs/gva_v0_3_boundary.md
-  - registry/manifest.yaml
-  - receipts/initialization_receipt.md
-primary_candidate_nodes:
-  - Projection
-  - ProductObject
-  - SourcePointer
-  - ArtifactReceipt
+  - src/project_semantics
+  - docs/f2_first_witness_boundary.md
+  - fixtures/first_witness
+  - receipts/f2_w2_k1_execution_receipt.md
+canonical_root_types:
+  - ProjectRef
+  - TaskContext
+  - WorkEpisode
+  - ContributionRecord
+  - ProjectLens
+  - WorkModuleManifest
+  - ConnectorManifest
+  - CompositionReceipt
+  - ProjectionPolicy
+brand_root_types: []
+source_custody: external_pointer_first
+hosted_service_required: false
 production_use: false
 release_claim: false
-

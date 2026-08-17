@@ -1,29 +1,9 @@
-# GVA v0.3 Boundary
+# Historical GVA v0.3 Boundary
 
-Status: new incubation repo.
+This document is retained as a historical-currentness surface. ProjectionWorkbench
+was initialized as a GVA v0.3 projection/compiler-boundary incubation repository.
+That state is not deleted or rewritten by the F2 witness.
 
-ProjectionWorkbench exists to incubate projection-workbench surfaces under the
-GVA v0.3 guarded design snapshot.
-
-## Source Pointers
-
-- Vision resource: `/mnt/c/Documents/All_sheaflab_repo/sheafdata (arc-5, vq011)/sheaflab_history/$$$formalisms and theories/Generative viability architectonics/v0.3`
-- Relevant pressure bundle: `v0.3/wave2/w2_b6_projection_compiler_boundary_validation_bundle.zip`
-
-## Allowed Claims
-
-- This repo exists as a GVA v0.3 incubation target.
-- Projection mappings can be developed here as candidate surfaces.
-- Compiler and projection boundaries must preserve source authority.
-
-## Forbidden Claims
-
-- GVA v0.3 is accepted, complete, or production-ready.
-- Projection mappings validate GVA theory or downstream product readiness.
-- Derived outputs can replace source objects or artifact custody receipts.
-
-## Next Safe Action
-
-Add one projection mapping example that separates source object, transform,
-compiled output, and receipt evidence.
-
+The current implementation boundary is defined in
+`docs/f2_first_witness_boundary.md`. Historical source pointers remain pointers;
+no old archive or external repository is copied into this repository.
