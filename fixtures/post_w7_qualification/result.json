@@ -1,0 +1,35 @@
+{
+  "schema_version": "gva06.f2.w9.b2.independent-postw7-qualification.v1",
+  "qualified_candidate_commit": "19cab543f1350a3fb51770745b68b91980ad4a03",
+  "validated_qualification_head": "1f0726b243c91bdb0e8643d39e8ef7b1b2cd58db",
+  "checks": {
+    "canonical_source_not_mutated": true,
+    "claim_ceiling_continuity": true,
+    "cookery_farming_regressions": true,
+    "exact_candidate_blobs": true,
+    "exact_pr17_base_lineage": true,
+    "exchange_round_trip": true,
+    "integrated_witness_replay": true,
+    "no_event_spine_cutover": true,
+    "no_hosted_dependency": true,
+    "privacy_currentness_controls": true,
+    "qualification_branch_does_not_modify_product_code": true,
+    "source_ingestion_controls": true,
+    "w7_b2_mapping_exchange_presence": true,
+    "w7_b3_domain_neutral_presence": true
+  },
+  "checks_passed": 14,
+  "checks_total": 14,
+  "full_repository_suite": {
+    "passed": 54,
+    "failed": 0
+  },
+  "package_build": "PASS",
+  "clean_room_install_and_import": "PASS",
+  "workflow_run": 32047968122,
+  "workflow_job": 95440172272,
+  "workflow_conclusion": "success",
+  "passed": true,
+  "terminal": "POST_W7_INTEGRATED_CANDIDATE_INDEPENDENTLY_QUALIFIED",
+  "claim_boundary": "Independent controlled local qualification only; no human/private value, production security, hosted necessity, release, merge, or owner-admission claim."
+}

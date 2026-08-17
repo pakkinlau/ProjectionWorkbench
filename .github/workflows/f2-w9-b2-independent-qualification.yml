@@ -1,0 +1,47 @@
+name: F2 W9 B2 independent candidate qualification
+
+on:
+  push:
+    branches:
+      - agent/f2-w9-b2-independent-postw7-qualification
+  workflow_dispatch:
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validation tools
+        run: python -m pip install --disable-pip-version-check pytest build
+      - name: Run complete repository suite
+        run: PYTHONPATH=src:. python -m pytest -q
+      - name: Run independent qualification witness
+        run: |
+          PYTHONPATH=src:. python scripts/run_f2_w9_b2_independent_postw7_qualification.py \
+            --output /tmp/f2_w9_b2_result.json
+          cat /tmp/f2_w9_b2_result.json
+      - name: Build wheel and source distribution
+        run: python -m build
+      - name: Clean-room install and import
+        run: |
+          python -m venv /tmp/f2-w9-b2-clean
+          /tmp/f2-w9-b2-clean/bin/python -m pip install --disable-pip-version-check --no-deps dist/*.whl
+          cd /tmp
+          /tmp/f2-w9-b2-clean/bin/python - <<'PY'
+          import pathlib
+          import project_semantics
+          import project_semantics.contribution
+          import project_semantics.cross_domain
+          import project_semantics.event_spine
+          import project_semantics.interoperability_v2
+          import project_semantics.privacy_v2
+          import project_semantics.source_ingestion
+          path = pathlib.Path(project_semantics.__file__).resolve()
+          assert "/tmp/f2-w9-b2-clean/" in str(path), path
+          print("clean-room imports: PASS", path)
+          PY
