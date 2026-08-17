@@ -9,8 +9,14 @@ from typing import Any
 
 from project_semantics import source_ingestion
 from project_semantics.event_spine import run_shadow_migration_witness
-from scripts.run_f2_w6_b1_requalification import run as run_contribution_requalification
-from scripts.run_f2_w6_b2_privacy_requalification import run as run_privacy_requalification
+
+try:
+    from scripts.run_f2_w6_b1_requalification import run as run_contribution_requalification
+    from scripts.run_f2_w6_b2_privacy_requalification import run as run_privacy_requalification
+except ModuleNotFoundError:
+    # Direct script execution places scripts/ rather than the repository root on sys.path.
+    from run_f2_w6_b1_requalification import run as run_contribution_requalification
+    from run_f2_w6_b2_privacy_requalification import run as run_privacy_requalification
 
 ROOT = Path(__file__).resolve().parents[1]
 EVENT_FIXTURE = ROOT / "fixtures" / "event_spine_shadow" / "bundle.json"
