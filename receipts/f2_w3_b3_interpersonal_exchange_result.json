@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "assumption_delta": true,
+    "attribution": true,
+    "lineage": true,
+    "negative_fails_closed": true,
+    "no_hosted_network": true,
+    "no_migration": true,
+    "only_bundle_crossed": true,
+    "positive_action": true,
+    "private_unchanged": true,
+    "return_to_origin": true,
+    "semantic_mapping": true,
+    "separate_processes": true
+  },
+  "claim_ceiling": "One deterministic two-instance witness only.",
+  "negative_receipt_id": "receipt:9c98182e3e2bbb8c7166acd1",
+  "passed": true,
+  "positive_receipt_id": "receipt:066dfafbe02a95482a6cc14a",
+  "subprocess_returns": [
+    {"digest": "cf1118eb27a561707891c9db24bd89090c81fa863276935582d5427ea4ac64c8", "role": "A_EXPORT"},
+    {"disposition": "COMPOSED_AND_ADAPTED", "failed_gates": [], "role": "B_CONSUME"},
+    {"accepted": true, "role": "A_ACCEPT"},
+    {"digest": "ef2217482832dbba33ca5720a1d7b1d163c44b36846aea4570522f624740e947", "role": "A_EXPORT"},
+    {"disposition": "FAILED_CLOSED", "failed_gates": ["version"], "role": "B_CONSUME"}
+  ],
+  "witness_id": "F2.W3.B3.interpersonal-exchange.v1"
+}
