@@ -1,0 +1,101 @@
+{
+  "source_horizon_refs": [
+    "git:pakkinlau/ProjectionWorkbench@ed8ca19aec46f76a859bd626da59f6499e556357",
+    "route:F2.W7.B4"
+  ],
+  "migration_recorded_at": "2026-08-17T16:00:00Z",
+  "expires_at": "2026-09-17T16:00:00Z",
+  "policy": {
+    "policy_id": "policy:independent-shadow-qualification-v1",
+    "mode": "shadow_only",
+    "canonical_cutover": false,
+    "private_by_default": true
+  },
+  "v0_project": {
+    "schema_version": "project-semantics.kernel.v0",
+    "created_at": "2026-08-01T00:00:00Z",
+    "project_ref": {
+      "project_id": "independent.event-spine.project",
+      "title": "Independent event spine qualification fixture",
+      "canonical_location": "external://independent/event-spine-project",
+      "project_kind": "research_software",
+      "owner_or_custodian": "local_user",
+      "source_identity": "project-source:independent-event-spine",
+      "access_policy": "local_private_by_default",
+      "currentness_policy": "explicit_snapshot_or_relink"
+    },
+    "source_links": [{
+      "link_id": "source:repo",
+      "kind": "repository",
+      "locator": "https://example.invalid/independent.git",
+      "content_identity": "sha256:independent-v1",
+      "custody": "external",
+      "access_policy": "metadata_only",
+      "observed_at": "2026-08-01T00:00:00Z"
+    }],
+    "episodes": [{
+      "episode_id": "episode:1",
+      "project_ref": "independent.event-spine.project",
+      "task_context_ref": "task:qualify",
+      "happened_at": "2026-08-02T00:00:00Z",
+      "recorded_at": "2026-08-02T00:01:00Z",
+      "activities": [
+        {"actor_ref": "actor:ai", "operation": "implemented_fixture"},
+        {"actor_ref": "actor:human", "operation": "reviewed_output"}
+      ],
+      "artifact_refs": ["artifact:witness"],
+      "outcome_state": "LOCAL_FIXTURE_CREATED"
+    }],
+    "contributions": [{
+      "contribution_id": "contribution:1",
+      "episode_ref": "episode:1",
+      "actor_ref": "actor:human",
+      "contribution_role": "frame",
+      "contribution_mode": "human_directed_ai_executed",
+      "assertion_state": "human_confirmed",
+      "claim_ceiling": "Human framed one bounded task",
+      "scope": "fixture objective and constraints",
+      "evidence_refs": ["evidence:brief"],
+      "source_refs": ["source:repo"],
+      "origin": "human"
+    }],
+    "attestations": [],
+    "evidence": [],
+    "transitions": [{
+      "transition_id": "transition:revoke",
+      "assertion_ref": "contribution:1",
+      "from_state": "human_confirmed",
+      "to_state": "revoked",
+      "authority_actor_ref": "actor:human",
+      "evidence_refs": ["evidence:revocation"],
+      "occurred_at": "2026-08-03T00:00:00Z",
+      "reason": "Subject withdrew the projection",
+      "claim_delta": "Remove from current capability projection"
+    }],
+    "receipts": [],
+    "lenses": [{
+      "lens_id": "lens:continuation:1",
+      "lens_kind": "continuation",
+      "task_context_ref": "task:qualify",
+      "project_snapshot_ref": "snapshot:1",
+      "selected_objects": [{"kind": "ProjectRef", "ref": "independent.event-spine.project"}],
+      "selected_relations": [],
+      "omitted_objects": ["private_raw_source_bytes"],
+      "omitted_relations": ["automatic_authorship"],
+      "assumptions": ["source is current at observation time"],
+      "information_loss": {"privacy_redaction": "raw bytes omitted"},
+      "provenance_refs": ["source:repo"],
+      "currentness": "source_bound_local_snapshot",
+      "privacy_projection": "private",
+      "claim_ceiling": "Local reentry only",
+      "actionable_private_value": {"next_action_or_reentry": "Review independent qualification"}
+    }],
+    "projections": [{
+      "projection_id": "projection:1",
+      "policy_ref": "policy:collaborator",
+      "audience": "bounded_collaborator",
+      "canonical_history_mutated": false,
+      "claim_ceiling": "Derived view only"
+    }]
+  }
+}
