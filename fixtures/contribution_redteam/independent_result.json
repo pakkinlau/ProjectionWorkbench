@@ -1,0 +1,23 @@
+{
+  "case_count": 12,
+  "cases": [
+    {"case_id":"RT-01","detail":"operation completed","expected":"BLOCK","family":"AI execution -> false human capability promotion","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-02","detail":"operation completed","expected":"BLOCK","family":"activity volume / recurrence laundering","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-03","detail":"operation completed","expected":"BLOCK","family":"collusive / weak attestation","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-04","detail":"operation completed","expected":"BLOCK","family":"stale recurrence / evidence drift","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-05","detail":"operation completed","expected":"BLOCK","family":"irrelevant transfer","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-06","detail":"operation completed","expected":"BLOCK","family":"revoked evidence","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-07","detail":"operation completed","expected":"ALLOW","family":"superseded assertion exclusion","observed":"ALLOW","policy_match":true},
+    {"case_id":"RT-08","detail":"operation completed","expected":"BLOCK","family":"scope laundering / attestation subject mismatch","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-09","detail":"operation completed","expected":"BLOCK","family":"independent-assessment identity mismatch","observed":"ALLOW","policy_match":false},
+    {"case_id":"RT-10","detail":"mastery/expertise and unsupported capability levels are forbidden","expected":"BLOCK","family":"mastery level promotion","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-11","detail":"supported capability requires contribution references","expected":"BLOCK","family":"empty evidence direct support","observed":"BLOCK","policy_match":true},
+    {"case_id":"RT-12","detail":"self-attestation must declare self independence","expected":"BLOCK","family":"self-attestation independence mismatch","observed":"BLOCK","policy_match":true}
+  ],
+  "claim_boundary": "Controlled local semantic red-team only; not legal authorship, human capability truth, employment suitability, domain authority, or release.",
+  "false_accepts": 8,
+  "false_rejects": 0,
+  "policy_matches": 4,
+  "schema_version": "gva06.f2.independent-contribution-capability-redteam.v1",
+  "terminal": "REPAIR_REQUIRED"
+}
