@@ -84,7 +84,7 @@ def source_controls_present() -> dict[str, bool]:
         "source_content_identity": "content_identity" in source,
         "source_supersession": "supersedes" in source,
         "source_reentry_eligibility": "eligible_for_reentry" in source,
-        "privacy_manifest_identity": "manifest_digest" in privacy,
+        "privacy_manifest_identity": "bundle_digest" in privacy and "manifest identity mismatch" in privacy,
         "privacy_currentness": "currentness" in privacy,
         "privacy_revocation_tombstone": "TOMBSTONED" in privacy and "REVOKED" in privacy,
         "event_spine_no_cutover_field": "canonical_cutover_authorized" in event_spine,
