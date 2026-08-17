@@ -12,12 +12,9 @@ false_accepts: 0
 false_rejects: 0
 ```
 
-## Material hashes
+## Material identity
 
-- `src/project_semantics/privacy_v2.py` — `efda2a350484e40deaa583e11f6a858f60e21897e6bd9e31f2ee6d92751cdd8a`
-- `scripts/run_f2_w6_b2_privacy_requalification.py` — `fb69921bb818fb1557a4a28a34194ea8b81841962da85cf0ff7c70258fd64f6a`
-- `tests/test_privacy_v2_requalification.py` — `91398642d3209f44a4b6c43745ecbb44f67acb723f261c45a820534605c2c1c0`
-- `fixtures/privacy_requalification/result.json` — `928cebe5e1c59446258397db850f4ba50e88af6f57fe6a22a4d285cad69a6499`
+The branch material is content-addressed by the Git commit and file blobs. Exact branch-level hashes are returned in the N2B handoff manifest rather than duplicated here.
 
 ## Claim boundary
 
