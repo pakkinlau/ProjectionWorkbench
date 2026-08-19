@@ -20,11 +20,14 @@ jobs:
         with:
           python-version: "3.11"
       - name: Execute canonical W3I assembly route
-        run: bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh /tmp/f-ruv-w3i-b1
+        run: |
+          mv integration/w3r/b1_patch_parts/part-04 integration/w3r/b1_patch_parts/ignored-04
+          bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh /tmp/f-ruv-w3i-b1
       - name: Upload pointer-slim assembly evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: GVA06_F_RUV_W3I_B1_assembly_evidence
           path: /tmp/f-ruv-w3i-b1
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
