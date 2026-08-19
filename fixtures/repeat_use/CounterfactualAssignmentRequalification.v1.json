@@ -1,0 +1,154 @@
+{
+  "artifact_id": "CounterfactualAssignmentRequalification.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "branch_id": "F.RUV.W3Q.B5",
+  "case_count": 17,
+  "cases": [
+    {
+      "case_id": "Q5.01_BASELINE_ADMISSIBLE",
+      "detail": "typed prospective baseline",
+      "expected": "COUNTERFACTUAL_ASSIGNMENT_ADMISSIBLE",
+      "observed": "COUNTERFACTUAL_ASSIGNMENT_ADMISSIBLE",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.02_NO_HUMAN_VALUE_PROMOTION",
+      "detail": "assignment admissibility is non-promoting",
+      "expected": false,
+      "observed": false,
+      "passed": true
+    },
+    {
+      "case_id": "Q5.03_OUTCOME_BLINDNESS",
+      "detail": "outcome visibility fails closed",
+      "expected": "INVALID_OUTCOME_BLINDNESS",
+      "observed": "INVALID_OUTCOME_BLINDNESS",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.04_CANONICAL_COMPARATOR_ID",
+      "detail": "alias drift is not silently flattened",
+      "expected": "INVALID_CONDITION_ASSIGNMENT",
+      "observed": "INVALID_CONDITION_ASSIGNMENT",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.05_PARITY_NONCOMPENSATORY",
+      "detail": "one parity failure blocks the panel",
+      "expected": "COMPARATOR_CONTAMINATION",
+      "observed": "COMPARATOR_CONTAMINATION",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.06_PRODUCT_EPOCH_DRIFT",
+      "detail": "product epoch is frozen",
+      "expected": "ASSIGNMENT_OR_SURFACE_DRIFT",
+      "observed": "ASSIGNMENT_OR_SURFACE_DRIFT",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.07_MEASUREMENT_POLICY_DRIFT",
+      "detail": "measurement policy is frozen",
+      "expected": "MEASUREMENT_OR_PRODUCT_DRIFT",
+      "observed": "MEASUREMENT_OR_PRODUCT_DRIFT",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.08_CONSENT_WITHDRAWAL",
+      "detail": "withdrawal precedes interpretation",
+      "expected": "CONSENT_WITHDRAWN_STOP",
+      "observed": "CONSENT_WITHDRAWN_STOP",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.09_ACCESSIBILITY_NOT_NEGATIVE",
+      "detail": "accessibility is not negative value",
+      "expected": "ACCESSIBILITY_BLOCKED_NOT_NEGATIVE_VALUE",
+      "observed": "ACCESSIBILITY_BLOCKED_NOT_NEGATIVE_VALUE",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.10_NONIDENTIFIABLE_PRECEDES_CENSOR",
+      "detail": "contamination is not laundered as missingness",
+      "expected": "NON_IDENTIFIABLE",
+      "observed": "NON_IDENTIFIABLE",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.11_OBSERVATIONAL_DOWNGRADE",
+      "detail": "voluntary assignment remains associational",
+      "expected": "OBSERVATIONAL_ASSOCIATION_ONLY",
+      "observed": "OBSERVATIONAL_ASSOCIATION_ONLY",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.12_BYPASS_SEPARATE_AGENCY",
+      "detail": "bypass is not negative value",
+      "expected": "BYPASS_SEPARATE_AGENCY",
+      "observed": "BYPASS_SEPARATE_AGENCY",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.13_SAME_INQUIRY_CROSSOVER",
+      "detail": "same-inquiry carryover triggers split",
+      "expected": "SPLIT_OR_REPLAN",
+      "observed": "SPLIT_OR_REPLAN",
+      "passed": true
+    },
+    {
+      "case_id": "Q5.14_W3R_B5_SURFACE_PRESENT",
+      "detail": "B5 implementation and frozen 36-scenario fixture suite are materialized",
+      "expected": true,
+      "observed": true,
+      "passed": true
+    },
+    {
+      "case_id": "Q5.15_B2_TO_B7_INTEGRATED_SURFACES",
+      "detail": "non-B1 repair modules coexist on one current line",
+      "expected": true,
+      "observed": true,
+      "passed": true
+    },
+    {
+      "case_id": "Q5.16_B1_TERMINAL_ADMISSION_MATERIALIZED",
+      "detail": "terminal admission and B7 normalization must be materialized, not transport-shaped",
+      "expected": true,
+      "observed": false,
+      "passed": false
+    },
+    {
+      "case_id": "Q5.17_B1_TRANSPORT_CLEARED",
+      "detail": "accepted source line must not retain unresolved B1 payload fragments",
+      "expected": 0,
+      "observed": 5,
+      "passed": false
+    }
+  ],
+  "claim_ceiling": "Independent integrated counterfactual-assignment requalification at a controlled mechanical/fixture and source-currentness ceiling only; no prospective human repeat-use value, retention, accumulated-history benefit, product direction, Wave-4 opening, release, merge, cutover, market demand, interpersonal/network value, or owner admission.",
+  "content_digest": "sha256:38e4b362fc17573c71c4cf73902faed01d27d587dc8469bf430364e7f080779e",
+  "counterfactual_surface_requalified": true,
+  "exact_reentry": "Materialize the accepted W3R.B1 admission/normalization delta on the same current integrated line, remove B1 transport fragments, then rerun this unchanged B5 qualifier before the conjunctive W3Q N3 merge.",
+  "failed": 2,
+  "integrated_base_ref": "agent/f-ruv-w3i-b1-integrated-w3r-repair-assembly-v2",
+  "integrated_terminal_admission_closed": false,
+  "passed": 15,
+  "positive_human_terminal_enabled": false,
+  "prior_wave_payload_bytes_embedded": 0,
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "prospective_human_trajectory_executed": false,
+  "route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+  "schema_version": "gva06.f.ruv.counterfactual-assignment-requalification.v1",
+  "stewardstack_current_observation": "5713f1fffdea8e56dd6f0242a4c247c7b4ae7659",
+  "stewardstack_route_pin": "a644409f293609ec2e6f0cb230ba0799d455ec1d",
+  "stewardstack_route_tree": "1b30eec0f7967f8ad24fab6a55bfaea2ddaec719",
+  "terminal_disposition": "RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT",
+  "unresolved_b1_transfer_fragments": [
+    ".gva-transfer/f-ruv-w3r-b1-payload.part000",
+    ".gva-transfer/f-ruv-w3r-b1-payload.part001",
+    ".gva-transfer/f-ruv-w3r-b1-payload.part002",
+    ".gva-transfer/f-ruv-w3r-b1-payload.part003",
+    ".gva-transfer/f-ruv-w3r-b1-payload.part004"
+  ],
+  "wave_4_open_from_this_branch": false,
+  "wave_id": "F.RUV.W3Q"
+}
