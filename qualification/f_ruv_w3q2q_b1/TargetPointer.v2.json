@@ -1,0 +1,15 @@
+{
+  "artifact_id": "FinalIntegratedW3RTarget.v2.pointer",
+  "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611",
+  "tree_digest": "1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7",
+  "archive_sha256": "3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98",
+  "file_count": 171,
+  "github_repository": "pakkinlau/ProjectionWorkbench",
+  "carrier_head": "1097ca27503e6ee02abfbc080d6f8df2e1d023fc",
+  "workflow_run_id": 32302418259,
+  "artifact_id_numeric": 9383501449,
+  "artifact_name": "GVA06_F_RUV_W3Q2R_B1_complete_target_carrier",
+  "artifact_zip_sha256": "19ec1745dcab9ab269d5ef5cc62bc83beefb5d41d45135348dcb2de437222e6f",
+  "predecessor_payload_embedded_bytes": 0,
+  "claim_ceiling": "Corrected target pointer and mechanical qualification operand only; no human-value or Wave-4 claim."
+}
