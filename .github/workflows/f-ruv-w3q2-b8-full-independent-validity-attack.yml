@@ -1,0 +1,147 @@
+name: f-ruv-w3q2-b8-full-independent-validity-attack
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reconstruct exact frozen W3I target in detached worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          QUAL_ROOT="$PWD"
+          W3I_HEAD=d41a17d2558ab8957b055e28f383350a4e06c007
+          TARGET_ROOT=/tmp/f-ruv-w3q2-b8-target
+          ASSEMBLY_OUT=/tmp/f-ruv-w3q2-b8-assembly
+          rm -rf "$TARGET_ROOT" "$ASSEMBLY_OUT"
+          git fetch --no-tags origin "$W3I_HEAD"
+          git worktree add --detach "$TARGET_ROOT" "$W3I_HEAD"
+          cd "$TARGET_ROOT"
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh')
+          text=path.read_text(encoding='utf-8')
+          replacements=[
+            (
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml'}",
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml','scripts/run_f_ruv_w3_b8_independent_measurement_validity_review.py','tests/test_f_ruv_w3_b8_independent_measurement_validity_review.py'}",
+            ),
+            (
+              'bash scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+              'python scripts/run_f_ruv_w3i_integrated_clean_room.py "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+            ),
+            (
+              "clean.get('terminal_disposition')=='CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS'",
+              "clean.get('terminal_disposition')=='INTEGRATED_CLEAN_ROOM_FRESH_AGENT_PASS'",
+            ),
+            (
+              '(cd "$OUT" && sha256sum * > SHA256SUMS)',
+              '(cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)',
+            ),
+          ]
+          for old,new in replacements:
+              if old not in text:
+                  raise SystemExit('integration patch anchor absent: '+old)
+              text=text.replace(old,new,1)
+          path.write_text(text,encoding='utf-8')
+          PY
+          bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh "$ASSEMBLY_OUT"
+          test "$(sha256sum "$ASSEMBLY_OUT/IntegratedW3RRepairAssembly.patch" | awk '{print $1}')" = 54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779
+          python - "$ASSEMBLY_OUT/IntegratedW3RRepairAssembly.v1.json" <<'PY'
+          import json,sys
+          value=json.load(open(sys.argv[1]))
+          assert value['artifact_digest']=='f48e690ea1896973bbedf44ce3e7ec621766e1204fffa38aa87c1a6ba911f5ff'
+          assert value['combined_patch_sha256']=='54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779'
+          assert value['terminal_disposition']=='INTEGRATED_W3R_REPAIR_ASSEMBLY_PASS_AT_CONTROLLED_LOCAL_CEILING'
+          assert all(value['checks'].values())
+          PY
+          printf '%s\n' "$QUAL_ROOT" > /tmp/F_RUV_W3Q2_B8_QUAL_ROOT
+          printf '%s\n' "$TARGET_ROOT" > /tmp/F_RUV_W3Q2_B8_TARGET_ROOT
+          printf '%s\n' "$ASSEMBLY_OUT" > /tmp/F_RUV_W3Q2_B8_ASSEMBLY_OUT
+      - name: Execute inherited plus 32 expanded and target-currentness attacks
+        shell: bash
+        run: |
+          set -euo pipefail
+          QUAL_ROOT="$(cat /tmp/F_RUV_W3Q2_B8_QUAL_ROOT)"
+          TARGET_ROOT="$(cat /tmp/F_RUV_W3Q2_B8_TARGET_ROOT)"
+          ASSEMBLY_OUT="$(cat /tmp/F_RUV_W3Q2_B8_ASSEMBLY_OUT)"
+          RESULT_OUT=/tmp/f-ruv-w3q2-b8-result
+          rm -rf "$RESULT_OUT" && mkdir -p "$RESULT_OUT"
+          cd "$TARGET_ROOT"
+          git diff --binary e289a2ff01ee31f2f32e85247a2956a835e3c175 -- \
+            . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
+            ':(exclude)integration/w3r/b1_patch_parts' > /tmp/w3q2-b8-pre.patch
+          test "$(sha256sum /tmp/w3q2-b8-pre.patch | awk '{print $1}')" = 54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779
+          base64 -d "$QUAL_ROOT/scripts/run_f_ruv_w3q2_b8_full_independent_validity_attack.py" > /tmp/run_f_ruv_w3q2_b8_full_independent_validity_attack.py
+          PYTHONPATH=src python /tmp/run_f_ruv_w3q2_b8_full_independent_validity_attack.py \
+            --root "$TARGET_ROOT" \
+            --output-dir "$RESULT_OUT" \
+            --assembly-evidence "$ASSEMBLY_OUT" \
+            | tee "$RESULT_OUT/qualification_stdout.txt"
+          git diff --binary e289a2ff01ee31f2f32e85247a2956a835e3c175 -- \
+            . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
+            ':(exclude)integration/w3r/b1_patch_parts' > /tmp/w3q2-b8-post.patch
+          cmp /tmp/w3q2-b8-pre.patch /tmp/w3q2-b8-post.patch
+          python - "$RESULT_OUT" <<'PY'
+          import hashlib,json,sys
+          from pathlib import Path
+          root=Path(sys.argv[1])
+          result=json.loads((root/'FullIndependentValidityAttackQualification.v1.json').read_text())
+          assert result['case_summary']['total']==45
+          assert result['case_summary']['baseline']['total']==5
+          assert result['case_summary']['expanded']['total']==32
+          assert result['case_summary']['integration_currentness']['total']==8
+          assert result['terminal_disposition'] in {
+            'FULL_INDEPENDENT_VALIDITY_ATTACK_QUALIFIED_AT_CONTROLLED_LOCAL_CEILING',
+            'SELECTIVE_REPAIR_REQUIRED_AFTER_FULL_INDEPENDENT_ATTACK',
+            'SOURCE_CURRENTNESS_DRIFT',
+          }
+          binding={
+            'artifact_id':'W3Q2B8TargetBinding.v1',
+            'target_id':'sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'base_commit':'e289a2ff01ee31f2f32e85247a2956a835e3c175',
+            'integrated_patch_sha256':'54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'assembly_artifact_digest':'f48e690ea1896973bbedf44ce3e7ec621766e1204fffa38aa87c1a6ba911f5ff',
+            'assembly_evidence_zip_sha256':'606e400a116d3cd07cd7bcd196973aa8ff954be11d0997ec9e4f5e8cdf81be7f',
+            'target_mutated_by_qualification':False,
+            'claim_ceiling':result['claim_ceiling'],
+          }
+          (root/'W3Q2B8TargetBinding.v1.json').write_text(json.dumps(binding,indent=2,sort_keys=True)+'\n')
+          validation={
+            'artifact_id':'W3Q2B8ValidationReport.v1',
+            'branch_id':'F.RUV.W3Q2.B8',
+            'target_reconstructed':True,
+            'assembly_checks_passed':True,
+            'target_patch_sha256':binding['integrated_patch_sha256'],
+            'target_mutation_check':'PASS',
+            'case_summary':result['case_summary'],
+            'terminal':result['terminal_disposition'],
+            'github_actions':'PASS_EXECUTION_COMPLETE',
+          }
+          (root/'W3Q2B8ValidationReport.v1.json').write_text(json.dumps(validation,indent=2,sort_keys=True)+'\n')
+          for name in ('IntegratedW3RRepairAssembly.v1.json','TerminalAdmissionIntegrityRepair.v1.json'):
+              src=Path('/tmp/f-ruv-w3q2-b8-assembly')/name
+              (root/name).write_bytes(src.read_bytes())
+          files=sorted(p for p in root.iterdir() if p.is_file() and p.name!='SHA256SUMS')
+          (root/'SHA256SUMS').write_text(''.join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n" for p in files))
+          PY
+      - name: Upload pointer-slim W3Q2.B8 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W3Q2_B8_qualification_evidence
+          path: /tmp/f-ruv-w3q2-b8-result
+          if-no-files-found: error
+          retention-days: 30
