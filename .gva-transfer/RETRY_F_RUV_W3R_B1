@@ -1,0 +1,3 @@
+triggered_by=F.RUV.W3I.B1
+purpose=materialize_existing_content_addressed_payload
+claim_boundary=workflow_trigger_only_not_acceptance_or_wave_opening
