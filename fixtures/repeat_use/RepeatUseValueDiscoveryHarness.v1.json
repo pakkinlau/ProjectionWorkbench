@@ -1,5 +1,15 @@
 {
-  "artifact_digest": "594b3140c08403a4e62016d8b51de1d490df9d71a8b2a90d4b01fecbcb512336",
+  "agency_event_types": [
+    "VOLUNTARY_REUSE",
+    "PROMPTED_REUSE",
+    "FORCED_PROTOCOL_USE",
+    "BYPASS",
+    "ABANDONMENT",
+    "CONSENT_WITHDRAWN",
+    "ACCESSIBILITY_BLOCKED",
+    "AGENCY_UNIDENTIFIABLE"
+  ],
+  "artifact_digest": "d8d12e08115791da43f4b3e881d541cb31c21929bb341f5c7fbcf7e45b87b455",
   "artifact_id": "RepeatUseValueDiscoveryHarness.v1",
   "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
   "branch_id": "F.RUV.W2.B1",
