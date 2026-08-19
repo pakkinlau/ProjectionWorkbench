@@ -8,7 +8,7 @@ web.branch -> web.reentry -> local.task -> core.intake -> core.work
 ```
 
 Control source: `pakkinlau/StewardStack@5713f1fffdea8e56dd6f0242a4c247c7b4ae7659`  
-Route-semantic tree: `1b30eec0f7967f3113f9c54eba8b347e62b37a`  
+Route-semantic tree: `1b30eec0f7967f8ad24fab6a55bfaea2ddaec719`  
 Route-launch digest: `a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa`
 
 ## Frozen target
