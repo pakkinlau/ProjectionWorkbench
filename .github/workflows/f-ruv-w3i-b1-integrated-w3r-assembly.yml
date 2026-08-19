@@ -42,6 +42,10 @@ jobs:
               "clean.get('terminal_disposition')=='CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS'",
               "clean.get('terminal_disposition')=='INTEGRATED_CLEAN_ROOM_FRESH_AGENT_PASS'",
             ),
+            (
+              '(cd "$OUT" && sha256sum * > SHA256SUMS)',
+              '(cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)',
+            ),
           ]
           for old,new in replacements:
               if old not in text:
@@ -68,7 +72,7 @@ jobs:
           fi
           git rev-parse HEAD | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TARGET_SHA.txt
           git ls-files -s | sha256sum | awk '{print $1}' | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TREE_INDEX_DIGEST.txt
-          (cd /tmp/f-ruv-w3i-b1 && find . -maxdepth 1 -type f -printf '%f\n' | sort > ARTIFACT_INDEX.txt && sha256sum * > SHA256SUMS)
+          (cd /tmp/f-ruv-w3i-b1 && find . -maxdepth 1 -type f -printf '%f\n' | sort > ARTIFACT_INDEX.txt && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
       - name: Upload pointer-slim assembly evidence
         if: always()
         uses: actions/upload-artifact@v4
