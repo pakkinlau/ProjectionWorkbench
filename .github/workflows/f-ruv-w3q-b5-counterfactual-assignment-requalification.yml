@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: agent/f-ruv-w3q-b5-counterfactual-assignment-requalification
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Materialize integrated W3R repair candidate
-        if: github.event_name == 'push'
         shell: bash
         run: |
           if [[ ! -f .gva-materialized/f-ruv-w3q-b5.done ]]; then
@@ -48,7 +48,7 @@ jobs:
           EOF
             git add -A
             git commit -m "test(ruv): requalify counterfactual assignment on integrated W3R line [w3q-b5-materialized]"
-            git push origin HEAD
+            git push origin HEAD:refs/heads/agent/f-ruv-w3q-b5-counterfactual-assignment-requalification
           fi
       - name: Full repository suite
         run: PYTHONPATH=src python -m unittest discover -s tests -v
