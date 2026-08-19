@@ -1,0 +1,20 @@
+{
+  "branch_axis_pass": true,
+  "branch_id": "F.RUV.W3Q2.B3",
+  "fixture_digest": "de35f75b8fec029126c1566c9d9f8a18745b85d2d4805310262a6f719017321c",
+  "replay_digest": "bbed587ac730812c4b66ed6428142c4fdf9d8b9a92a840c04b472e577bd09f3d",
+  "target_identity": "sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+  "target_tree_sha1": "361941e3c6317cf7c14c745c74a059bab5ccf24c",
+  "terminal_disposition": "INTEGRATED_CLEAN_ROOM_FRESH_AGENT_QUALIFICATION_PASS",
+  "tests_a": {
+    "failed": 0,
+    "ok": true,
+    "total": 128
+  },
+  "tests_b": {
+    "failed": 0,
+    "ok": true,
+    "total": 128
+  },
+  "wave4_open": false
+}
