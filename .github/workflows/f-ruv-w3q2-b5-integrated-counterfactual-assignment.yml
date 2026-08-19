@@ -1,0 +1,49 @@
+name: f-ruv-w3q2-b5-integrated-counterfactual-assignment
+
+on:
+  push:
+    branches: [agent/f-ruv-w3q2-b5-integrated-counterfactual-assignment]
+  pull_request:
+    branches: [agent/f-ruv-w3-b8-independent-measurement-validity-review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Execute canonical W3Q2 B5 qualification
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash scripts/run_f_ruv_w3q2_b5.sh
+      - name: Verify bounded return contract
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'gva06-f-ruv-w3q2-b5'
+          terminal=json.loads((root/'IntegratedCounterfactualAssignmentQualification.v1.json').read_text())
+          completion=json.loads((root/'BranchCompletionReceipt.json').read_text())
+          assert terminal['target_identity']=='sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779'
+          assert terminal['positive_human_terminal_enabled'] is False
+          assert terminal['wave_4_open_from_this_branch'] is False
+          assert completion['accepted_current'] is True
+          assert completion['completion_predicate_result']=='PASS'
+          for name in ('BranchReturn.json','WorkerReturn.W1.json','WorkerReturn.W2.json','WorkerReturn.W3.json','MANIFEST.json','SHA256SUMS'):
+              assert (root/name).is_file(), name
+          PY
+      - name: Upload pointer-slim N2B return
+        uses: actions/upload-artifact@v4
+        with:
+          name: gva06-f-ruv-w3q2-b5-n2b-return
+          path: ${{ runner.temp }}/gva06-f-ruv-w3q2-b5
+          if-no-files-found: error
+          retention-days: 14
