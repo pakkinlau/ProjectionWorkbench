@@ -1,0 +1,21 @@
+{
+  "claim_ceiling": "Harness/component construction and R0 mechanical replay only; no human repeat-use value, retention, product direction, interpersonal value, hosted necessity, market demand, release, or owner admission claim.",
+  "epoch_id": "epoch:F.RUV.W2.B1.fixture.v1",
+  "feature_flags": {
+    "capture_tier": "MINIMAL",
+    "fresh_agent_mode": true,
+    "history_enabled": false,
+    "provenance_view_enabled": true,
+    "semantic_lens_enabled": true
+  },
+  "instrumentation_tier": "MINIMAL",
+  "object_type": "RepeatUseExperimentEpoch.v1",
+  "policy_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+  "product_phase_id": "projectionworkbench:19cab543",
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "source_snapshot_refs": [
+    "git:pakkinlau/ProjectionWorkbench@19cab543f1350a3fb51770745b68b91980ad4a03",
+    "git:pakkinlau/StewardStack@a644409f293609ec2e6f0cb230ba0799d455ec1d"
+  ],
+  "started_at": "2026-08-19T08:00:00Z"
+}

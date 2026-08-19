@@ -1,0 +1,11 @@
+{
+  "claim_ceiling": "Harness/component construction and R0 mechanical replay only; no human repeat-use value, retention, product direction, interpersonal value, hosted necessity, market demand, release, or owner admission claim.",
+  "event_count": 6,
+  "expected_terminal": "RIGHT_CENSORED",
+  "fixture_digest": "87e733e018764d38cce55d00082dc614122b9c8a0fcd19bdc6bffa0f04a34d29",
+  "fixture_id": "F.RUV.W2.B1.mechanical-fixture.v1",
+  "human_value_supported": false,
+  "passed": true,
+  "replay_digest": "33b58812596daac7d3f1e6d7fe1776d3bd28e65426c81ded596b6642bd7c5ab2",
+  "terminal": "RIGHT_CENSORED"
+}

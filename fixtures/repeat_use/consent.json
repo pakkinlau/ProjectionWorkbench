@@ -1,0 +1,15 @@
+{
+  "claim_ceiling": "Harness/component construction and R0 mechanical replay only; no human repeat-use value, retention, product direction, interpersonal value, hosted necessity, market demand, release, or owner admission claim.",
+  "issued_at": "2026-08-19T07:59:00Z",
+  "object_type": "ConsentReceipt.v1",
+  "participant_id": "participant:synthetic-fixture",
+  "receipt_id": "consent:F.RUV.W2.B1.fixture.local-only",
+  "scopes": {
+    "artifact_export": false,
+    "future_recontact": false,
+    "human_judgment_capture": false,
+    "local_operational_capture": true,
+    "research_reuse_or_training": false,
+    "share_or_merge_with_another_party": false
+  }
+}
