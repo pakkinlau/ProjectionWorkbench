@@ -6,6 +6,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 import argparse, json, re
 HUNK_RE=re.compile(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
+INTEGRATOR_OWNED={"src/repeat_use_harness/__init__.py","src/repeat_use_harness/harness.py"}
 @dataclass
 class Hunk: old_start:int; old_count:int; new_start:int; new_count:int; lines:list[str]
 @dataclass
@@ -76,7 +77,11 @@ def apply_one(root:Path,fp:FilePatch,minimum:float)->dict[str,object]:
   cur[start:start+size]=new;offset+=len(new)-size;obs.append({'hunk':index,'mode':mode,'similarity':round(score,4),'start':start,'old_size':size,'new_size':len(new)})
  target.write_text(''.join(cur),encoding='utf-8');return {'path':fp.new_path,'mode':'updated','hunks':obs}
 def main()->int:
- ap=argparse.ArgumentParser();ap.add_argument('patch');ap.add_argument('--root',default='.');ap.add_argument('--min-similarity',type=float,default=.55);ap.add_argument('--report');ns=ap.parse_args();root=Path(ns.root).resolve();result={'root':str(root),'patch':str(Path(ns.patch).resolve()),'files':[apply_one(root,x,ns.min_similarity) for x in parse(Path(ns.patch).read_text(encoding='utf-8'))]};text=json.dumps(result,indent=2,sort_keys=True)+'\n';print(text,end='');
+ ap=argparse.ArgumentParser();ap.add_argument('patch');ap.add_argument('--root',default='.');ap.add_argument('--min-similarity',type=float,default=.55);ap.add_argument('--report');ns=ap.parse_args();root=Path(ns.root).resolve();patches=parse(Path(ns.patch).read_text(encoding='utf-8'));files=[]
+ for item in patches:
+  if item.new_path in INTEGRATOR_OWNED:files.append({'path':item.new_path,'mode':'skipped_for_explicit_integration_resolution'})
+  else:files.append(apply_one(root,item,ns.min_similarity))
+ result={'root':str(root),'patch':str(Path(ns.patch).resolve()),'files':files};text=json.dumps(result,indent=2,sort_keys=True)+'\n';print(text,end='')
  if ns.report:Path(ns.report).write_text(text,encoding='utf-8')
  return 0
 if __name__=='__main__':raise SystemExit(main())
