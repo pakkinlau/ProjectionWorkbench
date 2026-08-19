@@ -84,7 +84,8 @@ jobs:
             . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
             ':(exclude)integration/w3r/b1_patch_parts' > /tmp/w3q2-b8-pre.patch
           test "$(sha256sum /tmp/w3q2-b8-pre.patch | awk '{print $1}')" = 54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779
-          PYTHONPATH=src python "$QUAL_ROOT/scripts/run_f_ruv_w3q2_b8_full_independent_validity_attack.py" \
+          base64 -d "$QUAL_ROOT/scripts/run_f_ruv_w3q2_b8_full_independent_validity_attack.py" > /tmp/run_f_ruv_w3q2_b8_full_independent_validity_attack.py
+          PYTHONPATH=src python /tmp/run_f_ruv_w3q2_b8_full_independent_validity_attack.py \
             --root "$TARGET_ROOT" \
             --output-dir "$RESULT_OUT" \
             --assembly-evidence "$ASSEMBLY_OUT" \
