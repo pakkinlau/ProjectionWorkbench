@@ -1,38 +1,46 @@
 name: f-ruv-w3i-b1-integrated-w3r-assembly
 
 on:
-  push:
-    branches:
-      - agent/f-ruv-w3i-b1-integrated-w3r-repair-assembly
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   assemble-and-validate:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    env:
+      TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ env.TARGET_BRANCH }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Execute canonical W3I assembly route
+      - name: Execute semantic W3I assembly route
         run: |
-          mv integration/w3r/b1_patch_parts/part-04 integration/w3r/b1_patch_parts/ignored-04
-          python - <<'PY'
-          from pathlib import Path
-          path=Path('scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh')
-          text=path.read_text()
-          old='git apply --3way "$B1_PATCH"'
-          new='python scripts/apply_fuzzy_unified_patch.py "$B1_PATCH" --root . --report "$OUT/B1_PATCH_APPLICATION.json"'
-          if old not in text:
-              raise SystemExit('B1 patch application anchor absent')
-          path.write_text(text.replace(old,new,1))
-          PY
           bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh /tmp/f-ruv-w3i-b1
+      - name: Freeze validated integrated target on disposable branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No material target delta to commit.'
+          else
+            git commit -m 'fix(ruv): materialize semantic W3R integration'
+            git push origin HEAD:${TARGET_BRANCH}
+          fi
+          git rev-parse HEAD | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TARGET_SHA.txt
+          git ls-files -s | sha256sum | awk '{print $1}' | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TREE_INDEX_DIGEST.txt
+          (cd /tmp/f-ruv-w3i-b1 && find . -maxdepth 1 -type f -printf '%f\n' | sort > ARTIFACT_INDEX.txt && sha256sum * > SHA256SUMS)
       - name: Upload pointer-slim assembly evidence
         if: always()
         uses: actions/upload-artifact@v4
