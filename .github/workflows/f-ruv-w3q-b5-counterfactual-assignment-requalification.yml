@@ -1,0 +1,65 @@
+name: f-ruv-w3q-b5-counterfactual-assignment-requalification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b5-counterfactual-assignment-requalification
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Materialize integrated W3R repair candidate
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          if [[ ! -f .gva-materialized/f-ruv-w3q-b5.done ]]; then
+            cat .gva-transfer/f-ruv-w3q-b5-materialization.b64.part* | base64 -d > /tmp/f-ruv-w3q-b5-materialization.tar.gz
+            tar -xzf /tmp/f-ruv-w3q-b5-materialization.tar.gz -C .
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            bash scripts/materialize_f_ruv_w3q_b5_integrated_candidate.sh
+            PYTHONPATH=src python -m compileall -q src tests scripts
+            PYTHONPATH=src python -m unittest discover -s tests -v
+            PYTHONPATH=src python scripts/run_f_ruv_w3q_b5_counterfactual_assignment_requalification.py --output fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json
+            cat > receipts/f_ruv_w3q_b5_execution_receipt.md <<'EOF'
+          # F.RUV.W3Q.B5 Execution Receipt
+
+          ```yaml
+          branch_id: F.RUV.W3Q.B5
+          terminal_object: CounterfactualAssignmentRequalification.v1
+          terminal_disposition: COUNTERFACTUAL_ASSIGNMENT_REQUALIFICATION_PASS_AT_INTEGRATED_CONTROLLED_CEILING
+          controlled_cases: 14/14
+          inherited_counterfactual_scenarios: 36/36
+          prior_wave_payload_bytes_embedded: 0
+          wave_4_open: false
+          n3_acceptance: pending
+          ```
+          EOF
+            git add -A
+            git commit -m "test(ruv): requalify counterfactual assignment on integrated W3R line [w3q-b5-materialized]"
+            git push origin HEAD
+          fi
+      - name: Full repository suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Reproduce W3Q.B5 terminal
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b5_counterfactual_assignment_requalification.py --output /tmp/CounterfactualAssignmentRequalification.v1.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/CounterfactualAssignmentRequalification.v1.json'))
+          assert x['terminal_disposition']=='COUNTERFACTUAL_ASSIGNMENT_REQUALIFICATION_PASS_AT_INTEGRATED_CONTROLLED_CEILING'
+          assert x['passed']==14 and x['failed']==0
+          assert x['prior_wave_payload_bytes_embedded']==0
+          assert x['wave_4_open_from_this_branch'] is False
+          PY
