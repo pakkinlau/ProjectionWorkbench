@@ -1,0 +1,23 @@
+{
+  "artifact_id": "CorrectedTargetValidityValidationReport.v1",
+  "branch_id": "F.RUV.W3Q2Q.B2",
+  "content_digest": "096d06e2ac494f2a4dcf5be52678644ba86142861af9e8b2f943a698351be80b",
+  "controls": [
+    {"check_id":"TC01","name":"archive sha256","pass":true,"detail":{"observed":"3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98","expected":"3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98"}},
+    {"check_id":"TC02","name":"carrier target identity","pass":true,"detail":{"observed":"sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611","expected":"sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611"}},
+    {"check_id":"TC03","name":"declared tree digest","pass":true,"detail":{"observed":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7","expected":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7"}},
+    {"check_id":"TC04","name":"manifest exact path/hash/size match","pass":true,"detail":{"file_count":171,"declared_count":171}},
+    {"check_id":"TC05","name":"independent double reconstruction byte equality","pass":true,"detail":{"tree_digest_a":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7","tree_digest_b":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7"}},
+    {"check_id":"TC06","name":"recomputed tree digest","pass":true,"detail":{"observed":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7","expected":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7"}},
+    {"check_id":"TC07","name":"full integrated unit suite","pass":true,"detail":{"returncode":0,"tests":128}},
+    {"check_id":"TC08","name":"original five attacks executed","pass":true,"detail":{"cases":5,"remaining_gaps":0,"returncode":0}},
+    {"check_id":"TC09","name":"expanded 32 attacks executed","pass":true,"detail":{"cases":32,"executed":32}},
+    {"check_id":"IC01","name":"public replay preserves typed terminal-admission operands","pass":false,"detail":{"missing_parameters":["comparator_panel_receipt","evidence_receipts"],"public_parameters":["allow_multi_project","assignment","consent","epoch","events","independent_review","thresholds","tombstones"]}},
+    {"check_id":"TC10","name":"declared target source-byte nonmutation","pass":true,"detail":{"declared_files_before":171,"declared_files_after":171,"declared_tree_digest_after":"1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7","generated_nonauthoritative_residue_count":24}},
+    {"check_id":"TC11","name":"generated runtime cache residue removed","pass":true,"detail":{"remaining_count":0,"remaining_extra_files":[]}}
+  ],
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "schema_version": "gva06.f.ruv.corrected-target-validity-validation-report.v1",
+  "summary": {"failed":1,"passed":11,"total":12},
+  "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611"
+}

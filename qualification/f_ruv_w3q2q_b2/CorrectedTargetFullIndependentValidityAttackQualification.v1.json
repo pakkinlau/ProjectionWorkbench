@@ -1,0 +1,99 @@
+{
+  "artifact_id": "CorrectedTargetFullIndependentValidityAttackQualification.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_REPAIR_REQUIRED",
+  "attack_summary": {
+    "expanded": 32,
+    "failed": 4,
+    "original": 5,
+    "passed": 33,
+    "total": 37
+  },
+  "branch_id": "F.RUV.W3Q2Q.B2",
+  "claim_ceiling": "Independent corrected-target identity/currentness and full validity-attack qualification at the controlled local/mechanical ceiling only; no prospective-human readiness, human repeat-use value, retention, accumulated-history benefit, product direction, interpersonal/network value, production security, legal compliance, release, merge, cutover, Wave-4 opening, or owner admission.",
+  "content_digest": "bf1342cc78e362c5f5041877a46a2fabe6a1b6fb1a39f324812812893141fd1e",
+  "exact_reentry": "If any validity attack failed, repair only the localized coordinates on a newly frozen target, then rerun Q7 and Q8. If all pass, merge fresh Q7 and Q8 with preserved Q1-Q6 through web.synthesize -> web.steer; only N3 may open Wave 4.",
+  "failed_case_ids": [
+    "CS04",
+    "TR02",
+    "SD02",
+    "AF03"
+  ],
+  "findings": [
+    {
+      "case_id": "CS04",
+      "expected_lawful_terminal": "RIGHT_CENSORED",
+      "name": "Consent issued after event time",
+      "observation": {
+        "blocked": false,
+        "gap": "consent issued after events was accepted",
+        "observed_terminal": "RIGHT_CENSORED"
+      }
+    },
+    {
+      "case_id": "TR02",
+      "expected_lawful_terminal": "NON_IDENTIFIABLE",
+      "name": "Right-censor masks contamination",
+      "observation": {
+        "gap": "right-censor or another terminal masked carryover non-identifiability",
+        "observed_terminal": "RIGHT_CENSORED",
+        "triggered_rule": "O20_RIGHT_CENSORED"
+      }
+    },
+    {
+      "case_id": "SD02",
+      "expected_lawful_terminal": "REPAIR_REQUIRED",
+      "name": "Additive minor field changes semantics",
+      "observation": {
+        "claim_impact": "NONE",
+        "gap": "semantically material additive field was preserved without a non-NONE compatibility/claim-impact decision",
+        "target_preserves_field": true,
+        "unknown_fields": [
+          "consent_revoked",
+          "inquiry_id",
+          "participant_id",
+          "preregistration_ref",
+          "product_phase_id",
+          "project_id"
+        ],
+        "unknown_fields_policy": "PRESERVE_WITH_RECEIPT"
+      }
+    },
+    {
+      "case_id": "AF03",
+      "expected_lawful_terminal": "NO_SAFE_PRODUCT_STEERING",
+      "name": "Positive terminal despite unchanged next action",
+      "observation": {
+        "gap": "positive admission ignored an explicit unchanged-next-action human judgment",
+        "human_next_action_changed": "FALSE",
+        "human_value_supported": true,
+        "observed_terminal": "REPEAT_USE_VALUE_SUPPORTED_BOUNDED"
+      }
+    }
+  ],
+  "first_zero": "PUBLIC_REPLAY_DROPS_TYPED_ADMISSION_OPERANDS",
+  "human_observation": false,
+  "nonclaims": [
+    "No prospective human trajectory was executed.",
+    "No human repeat-use value, retention, accumulated-history benefit, or product direction is established.",
+    "This branch alone does not establish the W3Q2 conjunction or open Wave 4.",
+    "Local content hashes are integrity bindings, not external owner or institutional admission."
+  ],
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "schema_version": "gva06.f.ruv.corrected-target-full-independent-validity-attack-qualification.v1",
+  "target": {
+    "archive_sha256": "3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98",
+    "artifact_id": "FinalIntegratedW3RTarget.v2",
+    "file_count": 171,
+    "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611",
+    "tree_digest": "1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7"
+  },
+  "target_control_summary": {
+    "failed": 1,
+    "passed": 11,
+    "total": 12
+  },
+  "target_mutation": false,
+  "terminal_disposition": "REPAIR_REQUIRED_AFTER_CORRECTED_TARGET_VALIDITY_ATTACK",
+  "wave4_open": false,
+  "wave_id": "F.RUV.W3Q2Q"
+}
