@@ -18,7 +18,11 @@ def export_event_log(events,destination,*,consent,purpose="bounded_local_export"
     validate_consent(consent); active=_tombstones(tombstones); invalid=_invalidation(events,active)
     if invalid: raise StateInvalidatedError("export invalidated by tombstone",invalid)
     normalized=[normalize_event(x)[0] for x in events]
-    if epoch is not None and assignment is not None: verify_event_log(normalized,epoch=epoch,assignment=assignment,consent=consent,tombstones=tombstones)
+    if epoch is not None and assignment is not None:
+        capture_consent=deepcopy(dict(consent))
+        capture_consent["scopes"]=deepcopy(dict(normalized[0]["consent_scope_snapshot"]))
+        capture_consent["receipt_id"]=f"{consent['receipt_id']}:capture-snapshot"
+        verify_event_log(normalized,epoch=epoch,assignment=assignment,consent=capture_consent,tombstones=tombstones)
     result=dict(_legacy_export_event_log(normalized,destination,consent=consent)); result.update({"receipt_kind":"RepeatUseEventExportReceipt.v2",
         "purpose":purpose,"purpose_bound":True,"event_log_digest":canonical_digest(normalized),"tombstone_count":len(active),"claim_ceiling":CLAIM_CEILING})
     result["receipt_id"]=stable_id("ruv-export-v2",result); return result
