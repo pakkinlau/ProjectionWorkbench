@@ -1,0 +1,31 @@
+name: f-ruv-w3r-b4-instrumentation-noninterference
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3r-b4-instrumentation-noninterference-repair
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full repository tests
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Deterministic noninterference witness
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3r_b4_noninterference_repair.py --output /tmp/witness-a.json
+          PYTHONPATH=src python scripts/run_f_ruv_w3r_b4_noninterference_repair.py --output /tmp/witness-b.json
+          cmp /tmp/witness-a.json /tmp/witness-b.json
+          python - <<'PY'
+          import json
+          result = json.load(open('/tmp/witness-a.json'))
+          assert result['manifest']['terminal'] == 'INSTRUMENTATION_NONINTERFERENCE_REPAIR_READY'
+          assert result['qualification_result']['terminal'] == 'INSTRUMENTATION_READY'
+          assert set(result['validation_matrix'].values()) == {'PASS'}
+          assert result['human_observation_state'] == 'SYNTHETIC_MECHANICAL_ONLY'
+          PY
