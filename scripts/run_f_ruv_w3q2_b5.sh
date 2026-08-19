@@ -34,6 +34,41 @@ if [[ "$RECON" == PASS ]]; then
   git -C "$TARGET" apply --check "$PATCH" && git -C "$TARGET" apply --index "$PATCH" || RECON=FAIL
 fi
 if [[ "$RECON" == PASS ]]; then
+  # The frozen assembly artifact carries the B1 add-only payload separately from
+  # the combined integration patch. Reconstruct only declared ADD_B1 paths;
+  # overlap-owned harness/replay/review surfaces remain those in the patch.
+  python - "$ASSEMBLY" "$TARGET" <<'PY'
+import json, shutil, sys
+from pathlib import Path
+assembly=Path(sys.argv[1]); target=Path(sys.argv[2])
+actions=json.loads((assembly/'B1_SEMANTIC_PORT_ACTIONS.json').read_text())
+conflicts=json.loads((assembly/'B1_SEMANTIC_PORT_CONFLICTS.json').read_text())
+assert conflicts == [], conflicts
+added=[]
+for row in actions:
+    path=row['path']
+    if row['action'] != 'ADD_B1':
+        continue
+    source=assembly/'b1_payload'/path
+    destination=target/path
+    if not source.is_file():
+        raise SystemExit(f'missing B1 add-only payload: {path}')
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source,destination)
+    added.append(path)
+assert added, 'no ADD_B1 payload paths reconstructed'
+(target/'.w3q2-b5-b1-add-paths.json').write_text(json.dumps(added,indent=2)+'\n')
+PY
+  mapfile -t B1_ADD_PATHS < <(python - "$TARGET/.w3q2-b5-b1-add-paths.json" <<'PY'
+import json,sys
+for path in json.load(open(sys.argv[1])):
+    print(path)
+PY
+)
+  git -C "$TARGET" add -- "${B1_ADD_PATHS[@]}"
+  rm -f "$TARGET/.w3q2-b5-b1-add-paths.json"
+fi
+if [[ "$RECON" == PASS ]]; then
   git -C "$TARGET" status --porcelain=v1 > "$OUT/target-status.before.txt"
   sha256sum "$OUT/target-status.before.txt" | awk '{print $1}' > "$OUT/target-status.before.sha256"
   git -C "$TARGET" write-tree > "$OUT/reconstructed-target-tree-sha1.txt"
