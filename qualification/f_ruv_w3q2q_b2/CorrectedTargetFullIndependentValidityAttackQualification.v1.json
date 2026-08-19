@@ -1,0 +1,143 @@
+{
+  "artifact_id": "CorrectedTargetFullIndependentValidityAttackQualification.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "branch_id": "F.RUV.W3Q2Q.B2",
+  "claim_ceiling": "Corrected-target controlled mechanical validity-attack qualification only; no prospective-human readiness, repeat-use value, retention, accumulated-history benefit, product direction, production security, release, merge, cutover, or owner admission.",
+  "coordinate": "Q8",
+  "exact_reentry": "Repair only the five residual Q8 coordinates on a new immutable target; then rerun F.RUV.W3Q2Q.B2 and merge with Q7 through web.synthesize -> web.steer.",
+  "first_zero": "CS04",
+  "full_result_artifact_digest": "eb5b5fefaf07f45197f8fe37427bd58628f6bb34b2b5c4e8f3ad4e6b8e261865",
+  "nonclaims": [
+    "No prospective participant trajectory was executed.",
+    "No human repeat-use value or retention is supported.",
+    "No product direction is selected.",
+    "This branch does not open Wave 4 by itself."
+  ],
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "residual_findings": [
+    {
+      "case_id": "CS04",
+      "expected": "temporal consent ordering rejection",
+      "name": "Consent issued after event time",
+      "observed": {
+        "accepted": true,
+        "terminal": "RIGHT_CENSORED"
+      },
+      "repair_coordinate": "ConsentTimelineAndRevocationReceipt.v1"
+    },
+    {
+      "case_id": "TR02",
+      "expected": "NON_IDENTIFIABLE must precede ordinary right censor when contamination is observed",
+      "name": "Right-censor masks contamination",
+      "observed": {
+        "canonical_terminal_priority": [
+          "HARM_OR_TRUST_BREACH",
+          "RIGHT_CENSORED",
+          "NON_IDENTIFIABLE",
+          "MEASUREMENT_REACTIVE",
+          "CAPTURE_COST_TOO_HIGH",
+          "NEGATIVE_NET_VALUE",
+          "RETENTION_WITHOUT_VALUE",
+          "ACCUMULATION_EFFECT_NOT_OBSERVED",
+          "EPISODE_VALUE_ONLY",
+          "VALUE_WITHOUT_REPEAT_NEED",
+          "HETEROGENEOUS_CONTEXT_DEPENDENT",
+          "REPEAT_USE_VALUE_SUPPORTED_BOUNDED",
+          "NO_SAFE_PRODUCT_STEERING"
+        ],
+        "nonidentifiability_reasons": [
+          "comparator is structurally unavailable or contaminated"
+        ],
+        "pending_reasons": [
+          "source currentness is missing or stale"
+        ],
+        "primary_terminal": "RIGHT_CENSORED",
+        "triggered_rule": "O20_RIGHT_CENSORED"
+      },
+      "repair_coordinate": "TerminalReachabilityAndPrecedenceMap.v1"
+    },
+    {
+      "case_id": "HS04",
+      "expected": "reject mutable overrides or bind frozen threshold policy",
+      "name": "Mutable thresholds reused across episodes",
+      "observed": {
+        "digest_after": "af1c637263ab3aeea5e0731f9a79a2300442177ea0fe3c7db1d508ad33260fce",
+        "digest_before": "91d73f9bd100d66feeea677d8f206f4311d4cdecab59bf9df28dae58a839cfc9",
+        "policy_bound": false,
+        "terminal_after": "RIGHT_CENSORED",
+        "terminal_before": "RIGHT_CENSORED"
+      },
+      "repair_coordinate": "AmbientStateIndependenceReceipt.v1"
+    },
+    {
+      "case_id": "SD02",
+      "expected": "semantic-effect classification must not default to NONE",
+      "name": "Additive minor field changes semantics",
+      "observed": {
+        "claim_impact": "NONE",
+        "field_preserved": "changes-admission",
+        "unknown_fields": [
+          "inquiry_id",
+          "participant_id",
+          "preregistration_ref",
+          "product_phase_id",
+          "project_id",
+          "semantic_effect"
+        ]
+      },
+      "repair_coordinate": "SchemaMigrationEnvelopeAndRoundTripReceipt.v1"
+    },
+    {
+      "case_id": "AF03",
+      "expected": "unchanged next action must block positive admission",
+      "name": "Positive terminal despite unchanged next action",
+      "observed": {
+        "next_action": "FALSE",
+        "receipt_bound": true,
+        "terminal": "REPEAT_USE_VALUE_SUPPORTED_BOUNDED"
+      },
+      "repair_coordinate": "AdmissionGateConjunctionReceipt.v1"
+    }
+  ],
+  "schema_version": "gva06.f.ruv.corrected-target-full-independent-validity-attack-qualification.v1",
+  "source_currentness": {
+    "github_artifact_digest": "sha256:19ec1745dcab9ab269d5ef5cc62bc83beefb5d41d45135348dcb2de437222e6f",
+    "github_artifact_id": "9383501449",
+    "github_workflow_run_id": "32302418259",
+    "route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+    "route_semantic_tree": "1b30eec0f7967f8ad24fab6a55bfaea2ddaec719",
+    "stewardstack_commit": "5713f1fffdea8e56dd6f0242a4c247c7b4ae7659"
+  },
+  "target": {
+    "archive_sha256": "3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98",
+    "artifact_id": "FinalIntegratedW3RTarget.v2",
+    "file_count": 171,
+    "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611",
+    "target_mutated": false,
+    "tree_digest": "1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7"
+  },
+  "terminal_disposition": "REPAIR_REQUIRED_AFTER_VALIDITY_ATTACK",
+  "validation": {
+    "expanded_attacks": {
+      "fail": 5,
+      "pass": 27,
+      "total": 32
+    },
+    "original_five_attacks": {
+      "fail": 0,
+      "pass": 5,
+      "terminal": "POST_REPAIR_VALIDITY_ATTACKS_CLOSED_AT_CONTROLLED_MECHANICAL_CEILING",
+      "total": 5
+    },
+    "target_identity_and_currentness_checks": {
+      "fail": 0,
+      "pass": 13,
+      "total": 13
+    },
+    "unit_suite": {
+      "pass": true,
+      "tests": 128
+    }
+  },
+  "wave_id": "F.RUV.W3Q2Q"
+}
