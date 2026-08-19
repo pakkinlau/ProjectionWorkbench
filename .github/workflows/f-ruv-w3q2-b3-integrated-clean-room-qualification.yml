@@ -1,0 +1,47 @@
+name: f-ruv-w3q2-b3-integrated-clean-room-qualification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q2-b3-integrated-clean-room-qualification
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  qualify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Execute W3Q2 B3
+        run: bash scripts/run_f_ruv_w3q2_b3_qualification.sh /tmp/f-ruv-w3q2-b3-results
+      - name: Upload pointer-slim evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W3Q2_B3_qualification
+          path: /tmp/f-ruv-w3q2-b3-results
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish compact durable result
+        env:
+          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          rm -rf artifacts/f-ruv-w3q2-b3
+          mkdir -p artifacts/f-ruv-w3q2-b3
+          cp /tmp/f-ruv-w3q2-b3-results/IntegratedCleanRoomFreshAgentQualification.v2.json artifacts/f-ruv-w3q2-b3/
+          cp /tmp/f-ruv-w3q2-b3-results/qualification-summary.json artifacts/f-ruv-w3q2-b3/
+          cp /tmp/f-ruv-w3q2-b3-results/SHA256SUMS artifacts/f-ruv-w3q2-b3/
+          printf '%s\n' '# F.RUV.W3Q2.B3 durable result' '' 'Compact typed result only; full logs and manifests remain in the immutable Actions artifact.' > artifacts/f-ruv-w3q2-b3/README.md
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add artifacts/f-ruv-w3q2-b3
+          git commit -m 'test(ruv): record W3Q2 B3 qualification' || exit 0
+          git push origin "HEAD:${TARGET_BRANCH}"

@@ -1,0 +1,67 @@
+{
+  "artifact_digest": "d4873b8827d38a63d56e11a7c4224c634025734829db6c446a4b156899037750",
+  "artifact_id": "IntegratedCleanRoomFreshAgentQualification.v2",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "base_commit": "e289a2ff01ee31f2f32e85247a2956a835e3c175",
+  "branch_axis_pass": true,
+  "branch_id": "F.RUV.W3Q2.B3",
+  "checks": {
+    "assembly_a_pass": true,
+    "assembly_b_pass": true,
+    "clean_room_a_pass": true,
+    "clean_room_b_pass": true,
+    "clean_room_checks_a": true,
+    "clean_room_checks_b": true,
+    "frozen_fixture_match": true,
+    "frozen_replay_match": true,
+    "same_git_tree": true,
+    "same_tracked_index": true,
+    "unit_suite_a_pass": true,
+    "unit_suite_b_pass": true
+  },
+  "claim_ceiling": "Independent clean-room/fresh-agent qualification at the R0 mechanical ceiling only; no human repeat-use value, Wave-4 opening, product direction, release, merge, cutover, or owner admission.",
+  "evidence_scope": {
+    "mechanical_rung": "R0_MECHANICAL",
+    "overall_w3q2_gate_satisfied": false,
+    "wave4_open": false
+  },
+  "exact_reentry": "Return to F.RUV.W3Q2.RollingSynthesis; await B1-B2 and B4-B8, then run web.synthesize -> web.steer.",
+  "integrated_patch_sha256": "54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+  "integration_source_head": "d41a17d2558ab8957b055e28f383350a4e06c007",
+  "mechanical_witness": {
+    "causal_terminal": "RIGHT_CENSORED",
+    "fixture_digest": "de35f75b8fec029126c1566c9d9f8a18745b85d2d4805310262a6f719017321c",
+    "human_value_supported": false,
+    "replay_digest": "bbed587ac730812c4b66ed6428142c4fdf9d8b9a92a840c04b472e577bd09f3d"
+  },
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "reconstruction_a": {
+    "assembly_digest": "f48e690ea1896973bbedf44ce3e7ec621766e1204fffa38aa87c1a6ba911f5ff",
+    "clean_room_digest": "2cf07395ccc249b96ef74070c18935dd17586b467580b23905c3173502bb3900",
+    "unit_suite": {
+      "failed": 0,
+      "ok": true,
+      "total": 128
+    },
+    "wheel_sha256": "e6bca80334ff4e20ab521cbe5a6ad2b41bb4d95e7ef0b7a3d1f3d68044790e6e"
+  },
+  "reconstruction_b": {
+    "assembly_digest": "f48e690ea1896973bbedf44ce3e7ec621766e1204fffa38aa87c1a6ba911f5ff",
+    "clean_room_digest": "be3df579b5e49755e364518040ddcb92483dfa89a592bfe2c5dc94502917f4db",
+    "unit_suite": {
+      "failed": 0,
+      "ok": true,
+      "total": 128
+    },
+    "wheel_sha256": "dae03be4186a7413029e8ce6f5a0782b4e2e03de5c1dfcfa4dfa100144502d00"
+  },
+  "route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+  "schema_version": "gva06.f.ruv.w3q2.integrated-clean-room-fresh-agent-qualification.v1",
+  "stewardstack_commit": "5713f1fffdea8e56dd6f0242a4c247c7b4ae7659",
+  "stewardstack_route_semantic_tree": "1b30eec0f7967f8ad24fab6a55bfaea2ddaec719",
+  "target_identity": "sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+  "target_tree_sha1": "361941e3c6317cf7c14c745c74a059bab5ccf24c",
+  "terminal_disposition": "INTEGRATED_CLEAN_ROOM_FRESH_AGENT_QUALIFICATION_PASS",
+  "tracked_index_sha256": "b469ba6316a1f419dffa02d9556ac7e3e0f5cd7316595682824a638667121ba7",
+  "wave_id": "F.RUV.W3Q2"
+}
