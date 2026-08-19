@@ -158,7 +158,7 @@ jobs:
           WHEEL_A=$(find /tmp/wheel-a -name '*.whl' -type f -print -quit)
           WHEEL_B=$(find /tmp/wheel-b -name '*.whl' -type f -print -quit)
           test -n "$WHEEL_A" -a -n "$WHEEL_B"
-          test "$(sha256sum "$WHEEL_A" | awk '{print $1}')" = "$(sha256sum "$WHEEL_B" | awk '{print $1}')"
+          sha256sum "$WHEEL_A" "$WHEEL_B" > "$OUT_DIR/wheel-build-sha256.txt"
           python -m venv /tmp/ruv-whl-a
           python -m venv /tmp/ruv-whl-b
           /tmp/ruv-whl-a/bin/python -m pip install --disable-pip-version-check --no-deps "$WHEEL_A"
@@ -232,6 +232,7 @@ jobs:
             /tmp/f-ruv-w3q2-b7-result/SOURCE_POINTERS.txt
             /tmp/f-ruv-w3q2-b7-result/RETURNS_SHA256SUMS
             /tmp/f-ruv-w3q2-b7-result/EVIDENCE_SHA256SUMS
+            /tmp/f-ruv-w3q2-b7-result/wheel-build-sha256.txt
             /tmp/f-ruv-w3q2-b7-result/full_unit_suite.log
           if-no-files-found: error
           retention-days: 30
