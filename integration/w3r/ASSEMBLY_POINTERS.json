@@ -1,0 +1,15 @@
+{
+  "artifact_id": "F.RUV.W3I.B1.SourcePointerSet.v1",
+  "base": "e289a2ff01ee31f2f32e85247a2956a835e3c175",
+  "component_heads": {
+    "F.RUV.W3R.B2": "3434f231f448643e98c75393734f0f1f5e117d54",
+    "F.RUV.W3R.B3": "f626a674a8b10cf3c97b662bb9ab9ef70453ec7d",
+    "F.RUV.W3R.B4": "aaccbe75756f6e5ed4a884ce66146d6e1475b2ed",
+    "F.RUV.W3R.B5": "a97cd81cb861a152e19ea7aa26b3f2f33501c45f",
+    "F.RUV.W3R.B6": "a8d2d7499ff48c884b992dca5e0373d2142bb95d",
+    "F.RUV.W3R.B7": "85dbf8dd8e133e92612a0f6cbb8f4892f78e0c03"
+  },
+  "b1_patch_sha256": "fa3dad8cc5555ceb6ee90607ebd3f28af5fc4f3d9f07815c4225dd056ae1b231",
+  "prior_wave_payload_embedded_bytes": 0,
+  "claim_boundary": "Pointer and currentness identities only; not integration acceptance, W3Q qualification, Wave-4 launch, release, merge, cutover, or owner admission."
+}
