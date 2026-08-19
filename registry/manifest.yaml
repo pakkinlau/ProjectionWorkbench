@@ -26,3 +26,14 @@ source_custody: external_pointer_first
 hosted_service_required: false
 production_use: false
 release_claim: false
+repeat_use_value_harness:
+  programme: GVA06.F.repeat-use-value-discovery.v2
+  branch: F.RUV.W2.B1
+  terminal_object: RepeatUseValueDiscoveryHarness.v1
+  package_surface: src/repeat_use_harness
+  fixture_surface: fixtures/repeat_use
+  execution_receipt: receipts/f_ruv_w2_b1_execution_receipt.md
+  evidence_rung: R0_MECHANICAL
+  prior_wave_transport: pointer_only
+  human_value_claim: false
+  product_direction_claim: false

@@ -22,6 +22,7 @@ classifiers = [
 
 [project.scripts]
 pws = "project_semantics.__main__:main"
+pws-ruv = "repeat_use_harness.__main__:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

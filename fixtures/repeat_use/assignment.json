@@ -1,0 +1,12 @@
+{
+  "assigned_before_start": true,
+  "assignment_id": "assignment:F.RUV.W2.B1.fixture.C3",
+  "assignment_method": "deterministic_fixture",
+  "assignment_seed_or_rule": "fixture-v1",
+  "carryover_firewall": "fresh-agent empty-history fixture",
+  "condition_id": "C3_F2_EMPTY_HISTORY",
+  "eligible_inquiry_stratum": "synthetic_mechanical_replay_only",
+  "object_type": "EpisodeAssignment.v1",
+  "outcome_blind": true,
+  "version_phase": "projectionworkbench:19cab543"
+}

@@ -1,0 +1,211 @@
+{
+  "agency_event_types": [
+    "VOLUNTARY_REUSE",
+    "PROMPTED_REUSE",
+    "FORCED_PROTOCOL_USE",
+    "BYPASS",
+    "ABANDONMENT",
+    "CONSENT_WITHDRAWN",
+    "ACCESSIBILITY_BLOCKED",
+    "AGENCY_UNIDENTIFIABLE"
+  ],
+  "artifact_digest": "d8d12e08115791da43f4b3e881d541cb31c21929bb341f5c7fbcf7e45b87b455",
+  "artifact_id": "RepeatUseValueDiscoveryHarness.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "branch_id": "F.RUV.W2.B1",
+  "burden_dimensions": [
+    "capture_minutes",
+    "review_and_correction_minutes",
+    "cognitive_load",
+    "switching_friction",
+    "privacy_concern",
+    "trust_or_control_loss",
+    "lock_in_dependence",
+    "error_recovery_cost"
+  ],
+  "causal_terminal_priority": [
+    "HARM_OR_TRUST_BREACH",
+    "RIGHT_CENSORED",
+    "NON_IDENTIFIABLE",
+    "MEASUREMENT_REACTIVE",
+    "CAPTURE_COST_TOO_HIGH",
+    "NEGATIVE_NET_VALUE",
+    "RETENTION_WITHOUT_VALUE",
+    "ACCUMULATION_EFFECT_NOT_OBSERVED",
+    "EPISODE_VALUE_ONLY",
+    "VALUE_WITHOUT_REPEAT_NEED",
+    "HETEROGENEOUS_CONTEXT_DEPENDENT",
+    "REPEAT_USE_VALUE_SUPPORTED_BOUNDED",
+    "NO_SAFE_PRODUCT_STEERING"
+  ],
+  "claim_ceiling": "Harness/component construction and R0 mechanical replay only; no human repeat-use value, retention, product direction, interpersonal value, hosted necessity, market demand, release, or owner admission claim.",
+  "cli": {
+    "fixture": "python -m repeat_use_harness fixture --output <dir>",
+    "manifest": "python -m repeat_use_harness manifest --output <json>",
+    "replay": "python -m repeat_use_harness replay --epoch <json> --assignment <json> --consent <json> --events <jsonl> --output <json>"
+  },
+  "comparator_arms": [
+    "C0_MANUAL_ORDINARY_WORKFLOW",
+    "C1_GENERIC_PROJECT_MEMORY",
+    "C2_POINTER_INDEX_ONLY",
+    "C3_F2_EMPTY_HISTORY",
+    "C4_F2_ACCUMULATED_VALID_HISTORY",
+    "C5_F2_HISTORY_NEGATIVE_CONTROL_FAMILY"
+  ],
+  "determinism": {
+    "canonical_json": "UTF-8, sorted keys, compact separators",
+    "content_hash": "sha256",
+    "replay_order": "episode_id then event sequence",
+    "same_input_same_digest": true
+  },
+  "event_required_metadata": [
+    "program_id",
+    "trajectory_id",
+    "episode_id",
+    "condition_id",
+    "schema_version",
+    "event_type",
+    "timestamp",
+    "source_refs",
+    "consent_scope_snapshot",
+    "feature_flag_snapshot",
+    "claim_ceiling"
+  ],
+  "exact_reentry": "After independent Wave-2 synthesis, bind a prospective human protocol through the declared owner/evaluator route; do not infer human value from this harness.",
+  "human_only_fields": [
+    "capture_review_burden_acceptable_confirmed_by_human",
+    "contribution_proposal_correction_by_human",
+    "future_reuse_intent",
+    "history_materially_helped_confirmed_by_human",
+    "next_action_changed_confirmed_by_human",
+    "reentry_better_than_baseline_confirmed_by_human",
+    "reentry_better_than_baseline_judgment",
+    "representation_fit_judgment",
+    "trust_and_control_judgment",
+    "usefulness_confirmed_by_human",
+    "usefulness_judgment",
+    "would_voluntarily_reuse_confirmed_by_human",
+    "human_usefulness_judgment",
+    "human_next_action_change_judgment",
+    "history_reuse_judgment",
+    "voluntary_reuse_or_bypass",
+    "correction_reason"
+  ],
+  "implemented_objects": [
+    "RepeatUseExperimentEpoch.v1",
+    "EpisodeAssignment.v1",
+    "ConsentReceipt.v1",
+    "RepeatUseEvent.v1",
+    "UserValueEpisode.v1",
+    "UserValueTrajectory.v1",
+    "AppendOnlyEventReceipt.v1",
+    "RepeatUseEventExportReceipt.v1",
+    "RepeatUseDeletionReceipt.v1",
+    "ReplayResult.v1"
+  ],
+  "instrumentation_terminals": [
+    "INSTRUMENTATION_READY",
+    "CAPTURE_COST_TOO_HIGH",
+    "MEASUREMENT_REACTIVE",
+    "CONSENT_SCOPE_ABSENT",
+    "ACCESSIBILITY_BLOCKED",
+    "HIDDEN_STATE_DEPENDENCE",
+    "NON_IDENTIFIABLE",
+    "RIGHT_CENSORED",
+    "NO_SAFE"
+  ],
+  "lawful_default_fixture_terminal": "RIGHT_CENSORED",
+  "mandatory_comparator_arms": [
+    "C0_MANUAL_ORDINARY_WORKFLOW",
+    "C1_GENERIC_PROJECT_MEMORY",
+    "C3_F2_EMPTY_HISTORY",
+    "C4_F2_ACCUMULATED_VALID_HISTORY"
+  ],
+  "nonclaims": [
+    "No real human repeat-use trajectory was observed.",
+    "No retention, accumulated-history benefit, or product direction is established.",
+    "No interpersonal, hosted, network, willingness-to-pay, or market claim is established.",
+    "No release, merge, cutover, or owner admission is established."
+  ],
+  "parity_rules": [
+    "P01_SOURCE_SNAPSHOT",
+    "P02_INFORMATION_VISIBILITY",
+    "P03_TASK_BLOCKS",
+    "P04_CLOCK",
+    "P05_BUDGET",
+    "P06_INTERFACE_FAMILIARIZATION",
+    "P07_EVALUATOR_FREEZE",
+    "P08_ORDER_BALANCE",
+    "P09_CAPTURE_COST",
+    "P10_NO_IMPUTATION",
+    "P11_HISTORY_ELIGIBILITY",
+    "P12_ARM_INTEGRITY"
+  ],
+  "positive_terminal_guard": {
+    "all_identifiability_gates_required": true,
+    "explicit_human_judgment_required": true,
+    "independent_review_required": true,
+    "mechanical_or_synthetic_fixture_can_pass": false,
+    "minimum_evidence_rung": "R3_REPEAT_TRAJECTORY"
+  },
+  "privacy_and_custody": {
+    "append_only_events": true,
+    "explicit_deletion_receipt": true,
+    "explicit_export_receipt": true,
+    "local_first": true,
+    "pointer_first_source_refs": true,
+    "raw_content_capture_default": false,
+    "separate_consent_scopes": [
+      "local_operational_capture",
+      "human_judgment_capture",
+      "artifact_export",
+      "share_or_merge_with_another_party",
+      "research_reuse_or_training",
+      "future_recontact"
+    ]
+  },
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "required_control_surfaces": [
+    "RepeatUseExperimentEpoch.v1",
+    "ProspectiveBaselineAndAssignmentSchedule.v1",
+    "TrajectoryCarryoverAndContaminationLedger.v1",
+    "InstrumentationDoseAndBurdenPolicy.v1",
+    "NoncompensatoryOutcomeVectorAndDecisionLaw.v1",
+    "MissingnessAttritionAndAbandonmentPolicy.v1",
+    "VoluntaryReuseObservationWindow.v1",
+    "IndependentOutcomeReviewContract.v1",
+    "AnalysisMultiplicityAndPolicyDigestRegister.v1",
+    "DelayedReentrySchedule.v1"
+  ],
+  "schema_version": "gva06.f.ruv.repeat-use-value-discovery-harness.v1",
+  "source_horizon": {
+    "canonical_route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+    "prior_wave_bytes_embedded": false,
+    "projectionworkbench_base_commit": "19cab543f1350a3fb51770745b68b91980ad4a03",
+    "stewardstack_commit": "a644409f293609ec2e6f0cb230ba0799d455ec1d",
+    "wave1_terminal_pointers": [
+      "ComparatorBaselinePortfolio.v1",
+      "FRepeatUseSourceControlBoundary.v2",
+      "ParticipantAgencyHeterogeneityProtocol.v1",
+      "RepeatUseInstrumentationContract.v2",
+      "RepeatUseTrajectoryProtocol.v2",
+      "RepeatUseValueCausalModel.v2",
+      "TemporalResumptionDesign.v1",
+      "ValueDiscoveryIdentifiabilityAudit.v2"
+    ]
+  },
+  "status": "IMPLEMENTED_VALIDATED_AT_MECHANICAL_CEILING",
+  "terminal_disposition": "HARNESS_READY_FOR_SYNTHETIC_AND_FUTURE_PROSPECTIVE_USE",
+  "trajectory_terminals": [
+    "REPEAT_USE_SUPPORTED",
+    "IMMEDIATE_VALUE_ONLY",
+    "ACCUMULATION_NOT_SUPPORTED",
+    "CAPTURE_COST_TOO_HIGH",
+    "NO_VOLUNTARY_REUSE",
+    "NEGATIVE_NET_VALUE",
+    "NON_IDENTIFIABLE",
+    "RIGHT_CENSORED",
+    "PROTOCOL_VIOLATION"
+  ],
+  "wave_id": "F.RUV.W2"
+}
