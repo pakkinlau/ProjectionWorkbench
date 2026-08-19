@@ -1,0 +1,73 @@
+{
+  "schema_version": "gva06.f.ruv.corrected-target-full-independent-validity-attack-qualification.v1",
+  "artifact_id": "CorrectedTargetFullIndependentValidityAttackQualification.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "wave_id": "F.RUV.W3Q2Q",
+  "branch_id": "F.RUV.W3Q2Q.B2",
+  "coordinate": "Q8",
+  "terminal_disposition": "REPAIR_REQUIRED_AFTER_VALIDITY_ATTACK",
+  "first_zero": "IC05",
+  "target": {
+    "artifact_id": "FinalIntegratedW3RTarget.v2",
+    "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611",
+    "tree_digest": "1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7",
+    "archive_sha256": "3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98",
+    "file_count": 171,
+    "target_mutated": false
+  },
+  "source_currentness": {
+    "stewardstack_commit": "5713f1fffdea8e56dd6f0242a4c247c7b4ae7659",
+    "route_semantic_tree": "1b30eec0f7967f8ad24fab6a55bfaea2ddaec719",
+    "route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+    "target_carrier_workflow_run": "32302418259",
+    "target_carrier_artifact": "9383501449"
+  },
+  "validation": {
+    "target_identity_currentness_and_integration": {"pass": 13, "fail": 1, "total": 14},
+    "integrated_unit_suite": {"pass": 128, "fail": 0, "total": 128},
+    "original_w3_b8_attacks": {"pass": 5, "fail": 0, "total": 5},
+    "expanded_attacks": {"pass": 27, "fail": 5, "total": 32}
+  },
+  "residual_findings": [
+    {
+      "case_id": "IC05",
+      "name": "Public replay drops typed terminal-admission operands",
+      "observed": ["evidence_receipts missing", "comparator_panel_receipt missing"],
+      "repair_coordinate": "PublicReplayAdmissionOperandCompatibility.v1"
+    },
+    {
+      "case_id": "CS04",
+      "name": "Consent issued after event time",
+      "observed": "accepted and right-censored instead of rejected",
+      "repair_coordinate": "ConsentTimelineAndRevocationReceipt.v1"
+    },
+    {
+      "case_id": "TR02",
+      "name": "Right-censor masks contamination",
+      "observed": "RIGHT_CENSORED precedes observed NON_IDENTIFIABLE contamination",
+      "repair_coordinate": "TerminalReachabilityAndPrecedenceMap.v1"
+    },
+    {
+      "case_id": "HS04",
+      "name": "Mutable thresholds reused across episodes",
+      "observed": "outcome-sensitive thresholds are not bound to a frozen epoch policy receipt",
+      "repair_coordinate": "AmbientStateIndependenceReceipt.v1"
+    },
+    {
+      "case_id": "SD02",
+      "name": "Additive minor field changes semantics",
+      "observed": "semantic_effect is retained while claim_impact defaults to NONE",
+      "repair_coordinate": "SchemaMigrationEnvelopeAndRoundTripReceipt.v1"
+    },
+    {
+      "case_id": "AF03",
+      "name": "Positive terminal despite unchanged next action",
+      "observed": "REPEAT_USE_VALUE_SUPPORTED_BOUNDED remains reachable with next_action_changed_confirmed=FALSE",
+      "repair_coordinate": "AdmissionGateConjunctionReceipt.v1"
+    }
+  ],
+  "full_result_artifact_digest": "5c12750e191d9359f97df47c160276e4153f74507acb0e9280329acf228ba50b",
+  "exact_reentry": "Repair only the six residual Q8 integration and attack coordinates on a new immutable target, rerun F.RUV.W3Q2Q.B2, then merge with Q7 through web.synthesize -> web.steer.",
+  "claim_ceiling": "Corrected-target controlled mechanical validity-attack qualification only; no prospective-human readiness, repeat-use value, retention, accumulated-history benefit, product direction, production security, release, merge, cutover, or owner admission."
+}
