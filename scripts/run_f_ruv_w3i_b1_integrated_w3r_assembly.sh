@@ -26,8 +26,9 @@ git merge-base --is-ancestor "$BASE" HEAD
 cat $B1_PATCH_PARTS > "$B1_PATCH_B64"
 base64 -d "$B1_PATCH_B64" | gzip -dc > "$B1_PATCH"
 sha256sum "$B1_PATCH" | tee "$OUT/B1_PATCH_SHA256.txt"
-git apply --check "$B1_PATCH"
-git apply "$B1_PATCH"
+# The uploaded B1 return was produced from a route-equivalent predecessor blob set,
+# so bind it by its content-addressed index and use Git's three-way application.
+git apply --3way "$B1_PATCH"
 
 apply_delta() {
   local name="$1" base="$2" head="$3"; shift 3
