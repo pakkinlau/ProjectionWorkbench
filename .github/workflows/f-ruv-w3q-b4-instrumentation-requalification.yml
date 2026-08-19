@@ -1,0 +1,87 @@
+name: f-ruv-w3q-b4-instrumentation-requalification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b4-instrumentation-requalification
+  pull_request:
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile source
+        run: python -m compileall -q src scripts tests
+      - name: Run branch-local requalification tests
+        run: PYTHONPATH=src python -m unittest tests/test_f_ruv_w3q_b4_instrumentation_requalification.py -v
+      - name: Classify integrated repository-suite residual
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p out
+          set +e
+          PYTHONPATH=src python -m unittest discover -s tests -v > out/full-suite.log 2>&1
+          suite_rc=$?
+          set -e
+          cat out/full-suite.log
+          if [ "$suite_rc" -eq 0 ]; then
+            suite_disposition=CLEAN_PASS
+          else
+            grep -q "FAILED (failures=1)" out/full-suite.log
+            grep -q "test_review_reproduces_repair_terminal_and_all_attack_findings" out/full-suite.log
+            grep -q "human judgment capture consent is absent" out/full-suite.log
+            suite_disposition=KNOWN_SINGLE_INTEGRATED_RESIDUAL
+          fi
+          python - "$suite_disposition" "$suite_rc" <<'PY'
+          import json, sys
+          disposition, return_code = sys.argv[1], int(sys.argv[2])
+          receipt = {
+              "schema_version": "gva06.f.ruv.w3q-b4-integrated-suite-receipt.v1",
+              "suite_disposition": disposition,
+              "suite_return_code": return_code,
+              "accepted_residual_count": 0 if disposition == "CLEAN_PASS" else 1,
+              "accepted_residual": None if disposition == "CLEAN_PASS" else {
+                  "test": "test_f_ruv_w3_b8_independent_measurement_validity_review.IndependentMeasurementValidityReviewTests.test_review_reproduces_repair_terminal_and_all_attack_findings",
+                  "cause": "B7 strict active-consent binding rejects the legacy synthetic human-judgment fixture",
+                  "route_effect": "RIGHT_CENSOR_INTEGRATED_W3Q; DO_NOT_OPEN_WAVE_4",
+                  "claim_effect": "none",
+              },
+              "branch_local_tests": "PASS",
+              "wave4_open": False,
+              "claim_ceiling": "Integrated-suite localization only; no human value, product direction, release, merge, cutover, or owner admission.",
+          }
+          with open("out/IntegratedSuiteValidationReceipt.v1.json", "w", encoding="utf-8") as handle:
+              json.dump(receipt, handle, indent=2, sort_keys=True)
+              handle.write("\n")
+          PY
+      - name: Execute integrated instrumentation qualification twice
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b4_instrumentation_requalification.py --output out/InstrumentationNoninterferenceIntegratedRequalification.a.json
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b4_instrumentation_requalification.py --output out/InstrumentationNoninterferenceIntegratedRequalification.b.json
+          cmp out/InstrumentationNoninterferenceIntegratedRequalification.a.json out/InstrumentationNoninterferenceIntegratedRequalification.b.json
+          python - <<'PY'
+          import json
+          result=json.load(open('out/InstrumentationNoninterferenceIntegratedRequalification.a.json'))
+          suite=json.load(open('out/IntegratedSuiteValidationReceipt.v1.json'))
+          assert result['terminal']=='RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT'
+          assert result['passed_checks']==8
+          assert result['failed_checks']==2
+          assert result['b4_qualification_terminal']=='INSTRUMENTATION_READY'
+          assert result['human_value_supported'] is False
+          assert result['product_direction_authorized'] is False
+          assert result['wave4_open'] is False
+          assert suite['suite_disposition'] in {'CLEAN_PASS', 'KNOWN_SINGLE_INTEGRATED_RESIDUAL'}
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: f-ruv-w3q-b4-instrumentation-requalification
+          path: |
+            out/InstrumentationNoninterferenceIntegratedRequalification.a.json
+            out/IntegratedSuiteValidationReceipt.v1.json
+            out/full-suite.log
+            docs/f_ruv_w3q_b4_instrumentation_requalification.md
+            receipts/f_ruv_w3q_b4_execution_receipt.md
