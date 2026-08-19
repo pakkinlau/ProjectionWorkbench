@@ -22,6 +22,16 @@ jobs:
       - name: Execute canonical W3I assembly route
         run: |
           mv integration/w3r/b1_patch_parts/part-04 integration/w3r/b1_patch_parts/ignored-04
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh')
+          text=path.read_text()
+          old='git apply --3way "$B1_PATCH"'
+          new='python scripts/apply_fuzzy_unified_patch.py "$B1_PATCH" --root . --report "$OUT/B1_PATCH_APPLICATION.json"'
+          if old not in text:
+              raise SystemExit('B1 patch application anchor absent')
+          path.write_text(text.replace(old,new,1))
+          PY
           bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh /tmp/f-ruv-w3i-b1
       - name: Upload pointer-slim assembly evidence
         if: always()
