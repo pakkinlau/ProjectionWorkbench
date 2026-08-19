@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - agent/f-ruv-w3r-b1-terminal-admission-integrity-repair
+  pull_request:
 
 permissions:
   contents: write
@@ -12,10 +13,13 @@ jobs:
   apply-and-validate:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ env.TARGET_BRANCH }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -53,4 +57,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'fix(ruv): bind terminal admission to typed receipts'
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:${TARGET_BRANCH}
