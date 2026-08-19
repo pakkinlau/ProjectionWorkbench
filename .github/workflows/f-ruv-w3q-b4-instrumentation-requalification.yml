@@ -1,0 +1,44 @@
+name: f-ruv-w3q-b4-instrumentation-requalification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b4-instrumentation-requalification
+  pull_request:
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile source
+        run: python -m compileall -q src scripts tests
+      - name: Run complete repository suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Execute integrated instrumentation qualification twice
+        run: |
+          mkdir -p out
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b4_instrumentation_requalification.py --output out/InstrumentationNoninterferenceIntegratedRequalification.a.json
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b4_instrumentation_requalification.py --output out/InstrumentationNoninterferenceIntegratedRequalification.b.json
+          cmp out/InstrumentationNoninterferenceIntegratedRequalification.a.json out/InstrumentationNoninterferenceIntegratedRequalification.b.json
+          python - <<'PY'
+          import json
+          result=json.load(open('out/InstrumentationNoninterferenceIntegratedRequalification.a.json'))
+          assert result['terminal']=='RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT'
+          assert result['passed_checks']==8
+          assert result['failed_checks']==2
+          assert result['b4_qualification_terminal']=='INSTRUMENTATION_READY'
+          assert result['human_value_supported'] is False
+          assert result['product_direction_authorized'] is False
+          assert result['wave4_open'] is False
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: f-ruv-w3q-b4-instrumentation-requalification
+          path: |
+            out/InstrumentationNoninterferenceIntegratedRequalification.a.json
+            docs/f_ruv_w3q_b4_instrumentation_requalification.md
+            receipts/f_ruv_w3q_b4_execution_receipt.md
