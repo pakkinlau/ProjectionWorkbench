@@ -1,0 +1,163 @@
+name: f-ruv-w3q2-b1-integrated-terminal-admission-qualification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    env:
+      ASSEMBLY_CARRIER: d41a17d2558ab8957b055e28f383350a4e06c007
+      TARGET_BASE: e289a2ff01ee31f2f32e85247a2956a835e3c175
+      TARGET_PATCH_SHA256: 54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Decode content-bound external qualifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/f-ruv-w3q2-b1-tools
+          cat .gva-transfer/f-ruv-w3q2-b1-qualifier.part0* > /tmp/f-ruv-w3q2-b1-tools/qualifier.b64
+          test "$(wc -c < /tmp/f-ruv-w3q2-b1-tools/qualifier.b64)" = "8492"
+          echo 'ab50f4547cc4b93d7632a11498a61ab0dbe4b59a09f78d209315d175d9d47cd3  /tmp/f-ruv-w3q2-b1-tools/qualifier.b64' \
+            | sha256sum -c -
+          base64 -d /tmp/f-ruv-w3q2-b1-tools/qualifier.b64 \
+            | gzip -dc > /tmp/f-ruv-w3q2-b1-tools/qualifier.py
+          echo 'e358c00f8e31c921307ccb38e813e769a823edd4f4001958602848161c0beb8e  /tmp/f-ruv-w3q2-b1-tools/qualifier.py' \
+            | sha256sum -c -
+          python -m py_compile /tmp/f-ruv-w3q2-b1-tools/qualifier.py
+
+      - name: Reconstruct exact frozen W3I target
+        shell: bash
+        run: |
+          set -euo pipefail
+          QUALIFIER_ROOT="$GITHUB_WORKSPACE"
+          TARGET=/tmp/f-ruv-w3q2-b1-target
+          ASSEMBLY_OUT=/tmp/f-ruv-w3q2-b1-assembly
+          rm -rf "$TARGET" "$ASSEMBLY_OUT"
+          git worktree add --detach "$TARGET" "$ASSEMBLY_CARRIER"
+          cd "$TARGET"
+
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh')
+          text=path.read_text(encoding='utf-8')
+          replacements=[
+            (
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml'}",
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml','scripts/run_f_ruv_w3_b8_independent_measurement_validity_review.py','tests/test_f_ruv_w3_b8_independent_measurement_validity_review.py'}",
+            ),
+            (
+              'bash scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+              'python scripts/run_f_ruv_w3i_integrated_clean_room.py "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+            ),
+            (
+              "clean.get('terminal_disposition')=='CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS'",
+              "clean.get('terminal_disposition')=='INTEGRATED_CLEAN_ROOM_FRESH_AGENT_PASS'",
+            ),
+            (
+              '(cd "$OUT" && sha256sum * > SHA256SUMS)',
+              '(cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)',
+            ),
+          ]
+          for old,new in replacements:
+              if old not in text:
+                  raise SystemExit('integration reconstruction anchor absent: '+old)
+              text=text.replace(old,new,1)
+          path.write_text(text,encoding='utf-8')
+          PY
+
+          bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh "$ASSEMBLY_OUT"
+          echo "$TARGET_PATCH_SHA256  $ASSEMBLY_OUT/IntegratedW3RRepairAssembly.patch" | sha256sum -c -
+          python - <<'PY'
+          import json
+          value=json.load(open('/tmp/f-ruv-w3q2-b1-assembly/IntegratedW3RRepairAssembly.v1.json'))
+          assert value['terminal_disposition']=='INTEGRATED_W3R_REPAIR_ASSEMBLY_PASS_AT_CONTROLLED_LOCAL_CEILING'
+          assert value['combined_patch_sha256']=='54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779'
+          assert all(value['checks'].values())
+          PY
+
+      - name: Execute independent W3Q2 B1 qualification without target mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          TARGET=/tmp/f-ruv-w3q2-b1-target
+          ASSEMBLY_OUT=/tmp/f-ruv-w3q2-b1-assembly
+          OUT=/tmp/f-ruv-w3q2-b1-qualification
+          rm -rf "$OUT"
+          mkdir -p "$OUT"
+
+          before=$(git -C "$TARGET" diff --binary "$TARGET_BASE" -- \
+            . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
+            ':(exclude)integration/w3r/b1_patch_parts' | sha256sum | awk '{print $1}')
+          test "$before" = "$TARGET_PATCH_SHA256"
+
+          export PYTHONDONTWRITEBYTECODE=1
+          python /tmp/f-ruv-w3q2-b1-tools/qualifier.py \
+            --target-root "$TARGET" \
+            --assembly-report "$ASSEMBLY_OUT/IntegratedW3RRepairAssembly.v1.json" \
+            --output "$OUT/IntegratedTerminalAdmissionQualification.v1.json" \
+            2>&1 | tee "$OUT/qualification-execution.log"
+
+          after=$(git -C "$TARGET" diff --binary "$TARGET_BASE" -- \
+            . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
+            ':(exclude)integration/w3r/b1_patch_parts' | sha256sum | awk '{print $1}')
+          test "$after" = "$before"
+
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          out=Path('/tmp/f-ruv-w3q2-b1-qualification')
+          q=json.loads((out/'IntegratedTerminalAdmissionQualification.v1.json').read_text())
+          assert q['terminal_disposition']=='INTEGRATED_TERMINAL_ADMISSION_QUALIFIED_AT_CONTROLLED_FIXTURE_CEILING'
+          assert q['qualification_summary']['checks_failed']==0
+          assert q['qualification_summary']['terminal_cases']==13
+          assert q['qualification_summary']['terminal_cases_passed']==13
+          receipt={
+            'schema_version':'gva06.f.ruv.target-nonmutation-receipt.v1',
+            'target_id':'sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'before_patch_sha256':'54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'after_patch_sha256':'54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'target_modified_by_qualifier':False,
+            'claim_ceiling':'Target nonmutation and controlled qualification mechanics only.'
+          }
+          (out/'TargetNonmutationReceipt.v1.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          assembly=json.loads(Path('/tmp/f-ruv-w3q2-b1-assembly/IntegratedW3RRepairAssembly.v1.json').read_text())
+          reconstruction={
+            'schema_version':'gva06.f.ruv.w3q2-target-reconstruction-receipt.v1',
+            'target_id':'sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'base_commit':'e289a2ff01ee31f2f32e85247a2956a835e3c175',
+            'assembly_carrier_commit':'d41a17d2558ab8957b055e28f383350a4e06c007',
+            'assembly_terminal':assembly['terminal_disposition'],
+            'assembly_artifact_digest':assembly['artifact_digest'],
+            'assembly_checks':assembly['checks'],
+            'reconstructed':True,
+            'claim_ceiling':'Controlled target reconstruction only; no human-value or Wave-4 claim.'
+          }
+          (out/'TargetReconstructionReceipt.v1.json').write_text(json.dumps(reconstruction,indent=2,sort_keys=True)+'\n')
+          PY
+
+          cp "$ASSEMBLY_OUT/IntegratedW3RRepairAssembly.v1.json" "$OUT/"
+          cp "$ASSEMBLY_OUT/TerminalAdmissionIntegrityRepair.v1.json" "$OUT/PredecessorTerminalAdmissionIntegrityRepair.v1.json"
+          (cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
+
+      - name: Upload pointer-slim W3Q2 B1 qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W3Q2_B1_qualification_evidence
+          path: /tmp/f-ruv-w3q2-b1-qualification
+          if-no-files-found: error
+          retention-days: 30
