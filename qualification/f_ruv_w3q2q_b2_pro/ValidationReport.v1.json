@@ -1,0 +1,20 @@
+{
+  "schema_version": "gva06.f.ruv.corrected-target-q8-validation-report.v1",
+  "artifact_id": "F.RUV.W3Q2Q.B2.ValidationReport.v1",
+  "branch_id": "F.RUV.W3Q2Q.B2",
+  "target_identity": "sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611",
+  "target_mutated": false,
+  "target_identity_currentness_and_integration": {
+    "pass": 13,
+    "fail": 1,
+    "total": 14,
+    "failed_check": "IC05_PUBLIC_REPLAY_TYPED_ADMISSION_OPERANDS"
+  },
+  "unit_suite": {"pass": 128, "fail": 0, "total": 128},
+  "original_attacks": {"pass": 5, "fail": 0, "total": 5},
+  "expanded_attacks": {"pass": 27, "fail": 5, "total": 32},
+  "residual_case_ids": ["IC05", "CS04", "TR02", "HS04", "SD02", "AF03"],
+  "terminal_disposition": "REPAIR_REQUIRED_AFTER_VALIDITY_ATTACK",
+  "first_zero": "IC05",
+  "full_result_artifact_digest": "5c12750e191d9359f97df47c160276e4153f74507acb0e9280329acf228ba50b"
+}
