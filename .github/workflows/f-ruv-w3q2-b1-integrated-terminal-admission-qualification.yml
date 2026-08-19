@@ -29,7 +29,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/f-ruv-w3q2-b1-tools
-          base64 -d .gva-transfer/f-ruv-w3q2-b1-qualifier.py.gz.b64 \
+          cat .gva-transfer/f-ruv-w3q2-b1-qualifier.part0* > /tmp/f-ruv-w3q2-b1-tools/qualifier.b64
+          test "$(wc -c < /tmp/f-ruv-w3q2-b1-tools/qualifier.b64)" = "8492"
+          echo 'ab50f4547cc4b93d7632a11498a61ab0dbe4b59a09f78d209315d175d9d47cd3  /tmp/f-ruv-w3q2-b1-tools/qualifier.b64' \
+            | sha256sum -c -
+          base64 -d /tmp/f-ruv-w3q2-b1-tools/qualifier.b64 \
             | gzip -dc > /tmp/f-ruv-w3q2-b1-tools/qualifier.py
           echo 'e358c00f8e31c921307ccb38e813e769a823edd4f4001958602848161c0beb8e  /tmp/f-ruv-w3q2-b1-tools/qualifier.py' \
             | sha256sum -c -
