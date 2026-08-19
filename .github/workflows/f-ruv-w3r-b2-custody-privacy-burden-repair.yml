@@ -1,0 +1,27 @@
+name: f-ruv-w3r-b2-custody-privacy-burden-repair
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3r-b2-custody-privacy-burden-repair
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full repository unit suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Independent 22-coordinate repair requalification
+        run: |
+          python scripts/run_f_ruv_w3r_b2_custody_privacy_burden_requalification.py --output /tmp/CustodyPrivacyBurdenRepairRequalification.v1.json
+          python - <<'PY'
+          import json
+          result=json.load(open('/tmp/CustodyPrivacyBurdenRepairRequalification.v1.json'))
+          assert result['summary']=={'total':22,'pass':20,'fail':0,'right_censored':2}
+          assert result['terminal']=='CUSTODY_PRIVACY_BURDEN_REPAIRED_AT_CONTROLLED_LOCAL_CEILING'
+          PY

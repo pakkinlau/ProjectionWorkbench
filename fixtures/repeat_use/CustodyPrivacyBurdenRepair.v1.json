@@ -1,0 +1,28 @@
+{
+  "ad_hoc_export_delete_paths": false,
+  "artifact_digest": "ec21699dade60d93284a3574707327cb21af5bfc5536c719daa0ee4294839fcd",
+  "artifact_id": "CustodyPrivacyBurdenRepair.v1",
+  "branch_id": "F.RUV.W3R.B2",
+  "canonical_authority": "CustodyPrivacyBurdenRepair.v1",
+  "claim_ceiling": "Controlled-local custody/privacy/burden repair only; no human value, production security, legal compliance, product direction, release, merge, cutover, or owner admission.",
+  "fixed_findings": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F08"
+  ],
+  "validation_summary": {
+    "focused_unit_tests": "12/12 PASS",
+    "independent_requalification": {
+      "fail": 0,
+      "pass": 20,
+      "right_censored": 2,
+      "total": 22
+    },
+    "inherited_B3_membrane_external_operand": "30/30 PASS"
+  }
+}
