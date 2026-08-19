@@ -30,6 +30,7 @@ from .harness import (
     validate_event,
     write_json,
 )
+from .noninterference import *
 
 __all__ = [name for name in globals() if not name.startswith("_")]
-__version__ = "1.0.0"
+__version__ = "1.1.0"
