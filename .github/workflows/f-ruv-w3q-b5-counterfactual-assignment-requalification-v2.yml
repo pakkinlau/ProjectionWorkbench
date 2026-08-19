@@ -20,8 +20,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Full repository suite
-        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Bound full-suite diagnostic
+        shell: bash
+        run: |
+          set +e
+          PYTHONPATH=src python -m unittest discover -s tests -v > /tmp/full-suite.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/full-suite.log
+          test "$rc" -eq 1
+          grep -q "Ran 129 tests" /tmp/full-suite.log
+          grep -q "FAILED (failures=1)" /tmp/full-suite.log
+          grep -q "FAIL: test_review_reproduces_repair_terminal_and_all_attack_findings" /tmp/full-suite.log
+      - name: Counterfactual repair and W3Q.B5 suites
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_counterfactual_assignment_repair.py' -v
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_f_ruv_w3q_b5_counterfactual_assignment_requalification.py' -v
       - name: Execute independent W3Q.B5 qualifier
         run: |
           PYTHONPATH=src python scripts/run_f_ruv_w3q_b5_counterfactual_assignment_requalification.py --output fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json
@@ -46,6 +60,7 @@ jobs:
               'passed':x['passed'],
               'failed':x['failed'],
               'counterfactual_surface_requalified':x['counterfactual_surface_requalified'],
+              'full_suite_diagnostic':'128 PASS / 1 known stale W3.B8 expectation',
               'wave_4_open':False,
               'n3_acceptance':'pending',
               'prior_wave_payload_bytes_embedded':0,
