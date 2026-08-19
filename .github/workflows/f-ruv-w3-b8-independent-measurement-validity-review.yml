@@ -1,0 +1,28 @@
+name: f-ruv-w3-b8-independent-measurement-validity-review
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3-b8-independent-measurement-validity-review
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full unit suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Reproduce independent repair terminal
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3_b8_independent_measurement_validity_review.py --output /tmp/IndependentMeasurementValidityReview.v1.json
+          python - <<'PY'
+          import json
+          review=json.load(open('/tmp/IndependentMeasurementValidityReview.v1.json'))
+          assert review['terminal_disposition']=='REPAIR_REQUIRED_BEFORE_PROSPECTIVE_HUMAN_TRAJECTORY'
+          assert review['executable_attack_summary']['confirmed_gaps']==5
+          assert review['executable_attack_summary']['passed_as_review'] is True
+          PY
