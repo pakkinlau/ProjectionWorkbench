@@ -1,0 +1,252 @@
+name: f-ruv-w3q-b3-integrated-clean-room-fresh-agent
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b3-integrated-clean-room-fresh-agent-qualification
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Reconstruct twice and qualify clean-room portability
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/gva06-f-ruv-w3q-b3"
+          TMP="$RUNNER_TEMP/gva06-f-ruv-w3q-b3-work"
+          mkdir -p "$OUT" "$TMP"
+          exec > >(tee "$OUT/qualification-execution.log") 2>&1
+
+          BASE=e289a2ff01ee31f2f32e85247a2956a835e3c175
+          HARNESS=510c60889d9ed7d3014cb6d9d6607ef7305c141c
+          IDS=(B1 B2 B3 B4 B5 B6 B7)
+          PRS=(30 26 24 29 25 27 28)
+          BASES=(
+            "$BASE" "$BASE" "$HARNESS" "$HARNESS" "$HARNESS" "$BASE" "$HARNESS"
+          )
+          HEADS=(
+            49f482011a2a7b57c5df84d21c428ea026e33288
+            3434f231f448643e98c75393734f0f1f5e117d54
+            f626a674a8b10cf3c97b662bb9ab9ef70453ec7d
+            aaccbe75756f6e5ed4a884ce66146d6e1475b2ed
+            a97cd81cb861a152e19ea7aa26b3f2f33501c45f
+            a8d2d7499ff48c884b992dca5e0373d2142bb95d
+            85dbf8dd8e133e92612a0f6cbb8f4892f78e0c03
+          )
+
+          SOURCE=CURRENT
+          FETCH_OK=1
+          for spec in "22:$HARNESS" "23:$BASE"; do
+            pr="${spec%%:*}"; expected="${spec#*:}"; ref="refs/remotes/origin/ruv-pr-$pr"
+            git fetch --force --no-tags origin "pull/$pr/head:$ref" || FETCH_OK=0
+            actual="$(git rev-parse "$ref" 2>/dev/null || true)"
+            if [[ "$actual" != "$expected" ]]; then
+              SOURCE="PR_${pr}_HEAD_DRIFT_EXPECTED_${expected}_OBSERVED_${actual}"
+              FETCH_OK=0
+            fi
+          done
+          for i in "${!IDS[@]}"; do
+            pr="${PRS[$i]}"; expected="${HEADS[$i]}"; ref="refs/remotes/origin/ruv-pr-$pr"
+            git fetch --force --no-tags origin "pull/$pr/head:$ref" || FETCH_OK=0
+            actual="$(git rev-parse "$ref" 2>/dev/null || true)"
+            if [[ "$actual" != "$expected" ]]; then
+              SOURCE="${IDS[$i]}_HEAD_DRIFT_EXPECTED_${expected}_OBSERVED_${actual}"
+              FETCH_OK=0
+            fi
+          done
+
+          reconstruct() {
+            local label="$1" wt="$TMP/$1" receipt="$OUT/$1-recipe.tsv"
+            : > "$receipt"
+            git worktree add --detach "$wt" "$BASE" || return 10
+            for i in "${!IDS[@]}"; do
+              local patch="$TMP/$label-${IDS[$i]}.patch"
+              git diff --binary --full-index "${BASES[$i]}" "${HEADS[$i]}" -- > "$patch" || return 11
+              local pd paths
+              pd="$(sha256sum "$patch" | awk '{print $1}')"
+              paths="$(git diff --name-only "${BASES[$i]}" "${HEADS[$i]}" -- | wc -l | tr -d ' ')"
+              printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
+                "${IDS[$i]}" "${PRS[$i]}" "${BASES[$i]}" "${HEADS[$i]}" "$pd" "$paths" >> "$receipt"
+              if ! git -C "$wt" apply --index --3way --whitespace=nowarn "$patch"; then
+                git -C "$wt" diff --name-only --diff-filter=U > "$OUT/$label-conflicts.txt" || true
+                return 20
+              fi
+              if git -C "$wt" diff --name-only --diff-filter=U | grep -q .; then
+                git -C "$wt" diff --name-only --diff-filter=U > "$OUT/$label-conflicts.txt"
+                return 21
+              fi
+            done
+            local tree manifest files
+            tree="$(git -C "$wt" write-tree)" || return 30
+            manifest="$(git ls-tree -r -z --full-tree "$tree" | sha256sum | awk '{print $1}')"
+            files="$(git ls-tree -r "$tree" | wc -l | tr -d ' ')"
+            printf '%s\n' "$tree" > "$OUT/$label-tree-sha1.txt"
+            printf '%s\n' "$manifest" > "$OUT/$label-tree-manifest-sha256.txt"
+            printf '%s\n' "$files" > "$OUT/$label-tracked-file-count.txt"
+            return 0
+          }
+
+          RA=99; RB=99
+          if [[ "$FETCH_OK" == 1 ]]; then
+            reconstruct reconstruction-a; RA=$?
+            reconstruct reconstruction-b; RB=$?
+          fi
+
+          TREE_A="$(cat "$OUT/reconstruction-a-tree-sha1.txt" 2>/dev/null || true)"
+          TREE_B="$(cat "$OUT/reconstruction-b-tree-sha1.txt" 2>/dev/null || true)"
+          MAN_A="$(cat "$OUT/reconstruction-a-tree-manifest-sha256.txt" 2>/dev/null || true)"
+          MAN_B="$(cat "$OUT/reconstruction-b-tree-manifest-sha256.txt" 2>/dev/null || true)"
+          SUITE=NOT_RUN; CLEAN_A=NOT_RUN; CLEAN_B=NOT_RUN
+
+          if [[ "$RA" == 0 && "$RB" == 0 && "$TREE_A" == "$TREE_B" && "$MAN_A" == "$MAN_B" ]]; then
+            if (cd "$TMP/reconstruction-a" && PYTHONPATH=src PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
+                python -m unittest discover -s tests -v) > "$OUT/integrated-full-suite.log" 2>&1; then
+              SUITE=PASS
+            else
+              SUITE=FAIL
+            fi
+            if bash "$TMP/reconstruction-a/scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh" \
+                "$TMP/reconstruction-a" "$OUT/reconstruction-a-CleanRoomFreshAgentRepair.v1.json" \
+                > "$OUT/reconstruction-a-clean-room.log" 2>&1; then CLEAN_A=PASS; else CLEAN_A=FAIL; fi
+            if bash "$TMP/reconstruction-b/scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh" \
+                "$TMP/reconstruction-b" "$OUT/reconstruction-b-CleanRoomFreshAgentRepair.v1.json" \
+                > "$OUT/reconstruction-b-clean-room.log" 2>&1; then CLEAN_B=PASS; else CLEAN_B=FAIL; fi
+          fi
+
+          DISP=NO_SAFE; ZERO=QUALIFICATION_EXECUTION_ERROR
+          if [[ "$FETCH_OK" != 1 ]]; then
+            DISP=RIGHT_CENSORED; ZERO=SOURCE_CURRENTNESS_RECHECK_REQUIRED
+          elif [[ "$RA" != 0 || "$RB" != 0 ]]; then
+            DISP=SELECTIVE_REPAIR_REQUIRED; ZERO=INTEGRATION_CONFLICT
+          elif [[ "$TREE_A" != "$TREE_B" || "$MAN_A" != "$MAN_B" ]]; then
+            DISP=SELECTIVE_REPAIR_REQUIRED; ZERO=NONDETERMINISTIC_INTEGRATION_RECIPE
+          elif [[ "$SUITE" != PASS ]]; then
+            DISP=SELECTIVE_REPAIR_REQUIRED; ZERO=INTEGRATED_TEST_FAILURE
+          elif [[ "$CLEAN_A" != PASS || "$CLEAN_B" != PASS ]]; then
+            DISP=SELECTIVE_REPAIR_REQUIRED; ZERO=CLEAN_ROOM_OR_FRESH_AGENT_FAILURE
+          elif ! cmp -s "$OUT/reconstruction-a-CleanRoomFreshAgentRepair.v1.json" \
+                         "$OUT/reconstruction-b-CleanRoomFreshAgentRepair.v1.json"; then
+            DISP=SELECTIVE_REPAIR_REQUIRED; ZERO=FRESH_AGENT_RESULT_MISMATCH
+          else
+            DISP=QUALIFIED_FOR_PROSPECTIVE_TRAJECTORIES
+            ZERO=INTEGRATED_CLEAN_ROOM_FRESH_AGENT_QUALIFIED
+          fi
+
+          export OUT SOURCE RA RB TREE_A TREE_B MAN_A MAN_B SUITE CLEAN_A CLEAN_B DISP ZERO
+          export GITHUB_RUN_ID GITHUB_SHA GITHUB_REF_NAME
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+
+          out=Path(os.environ['OUT'])
+          repairs=[]
+          receipt=out/'reconstruction-a-recipe.tsv'
+          if receipt.exists():
+              for line in receipt.read_text().splitlines():
+                  b,pr,base,head,patch,count=line.split('\t')
+                  repairs.append({'repair_id':f'F.RUV.W3R.{b}','pr':int(pr),'base':base,'head':head,
+                                  'patch_sha256':patch,'changed_path_count':int(count)})
+          claim=('Independent integrated clean-room, source/wheel installation, deterministic reconstruction, '
+                 'fresh-agent rehydration, and R0 mechanical replay qualification only. No human repeat-use '
+                 'value, retention, accumulated-history benefit, product direction, interpersonal/network value, '
+                 'hosted necessity, market demand, release, merge, cutover, Wave-4 opening, or owner admission.')
+          recipe={
+              'schema_version':'gva06.f.ruv.w3r-integration-recipe.v1',
+              'recipe_id':'W3RIntegrationRecipe.v1',
+              'integration_base':'e289a2ff01ee31f2f32e85247a2956a835e3c175',
+              'repair_order_law':'route-listed B1..B7 order; qualifier performs no conflict resolution',
+              'repairs':repairs,
+              'route_launch_digest':'a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa',
+              'frozen_stewardstack_commit':'a644409f293609ec2e6f0cb230ba0799d455ec1d',
+              'current_stewardstack_commit_observed':'5713f1fffdea8e56dd6f0242a4c247c7b4ae7659',
+              'stewardstack_tree_identity':'1b30eec0f7967f8ad24fab6a55bfaea2ddaec719',
+              'wave4_carrier_pointer':{'name':'wave4(3).zip','sha256':'daa29673abc51ded766b369c0e6b632957739f164efa3fbdb76f3be0460d0034','bytes_embedded':False},
+              'claim_ceiling':claim,
+          }
+          recipe['recipe_sha256']=hashlib.sha256(json.dumps(recipe,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          (out/'W3RIntegrationRecipe.v1.json').write_text(json.dumps(recipe,indent=2,sort_keys=True)+'\n')
+
+          reasons={
+              'QUALIFIED_FOR_PROSPECTIVE_TRAJECTORIES':['two fresh reconstructions were byte-identical at the Git tree/manifest level','integrated suite passed','source/wheel clean-room receipts matched','R0 remained mechanical and right-censored'],
+              'SELECTIVE_REPAIR_REQUIRED':[os.environ['ZERO']],
+              'RIGHT_CENSORED':[os.environ['SOURCE']],
+              'NO_SAFE':[os.environ['ZERO']],
+          }[os.environ['DISP']]
+          terminal={
+              'schema_version':'gva06.f.ruv.integrated-clean-room-fresh-agent-qualification.v1',
+              'artifact_id':'IntegratedCleanRoomFreshAgentQualification.v1',
+              'program_id':'GVA06.F.repeat-use-value-discovery.v2','wave_id':'F.RUV.W3Q','branch_id':'F.RUV.W3Q.B3',
+              'artifact_state':'EXECUTED_VALIDATED_MERGEABLE_CANDIDATE',
+              'terminal_disposition':os.environ['DISP'],'first_zero':os.environ['ZERO'],'terminal_reasons':reasons,
+              'source_currentness':os.environ['SOURCE'],
+              'reconstruction_a':{'returncode':int(os.environ['RA']),'tree_sha1':os.environ['TREE_A'],'manifest_sha256':os.environ['MAN_A']},
+              'reconstruction_b':{'returncode':int(os.environ['RB']),'tree_sha1':os.environ['TREE_B'],'manifest_sha256':os.environ['MAN_B']},
+              'integrated_suite':os.environ['SUITE'],'clean_room_a':os.environ['CLEAN_A'],'clean_room_b':os.environ['CLEAN_B'],
+              'expected_mechanical_witness':{'fixture_digest':'87e733e018764d38cce55d00082dc614122b9c8a0fcd19bdc6bffa0f04a34d29','replay_digest':'33b58812596daac7d3f1e6d7fe1776d3bd28e65426c81ded596b6642bd7c5ab2','causal_terminal':'RIGHT_CENSORED','human_value_supported':False},
+              'github':{'run_id':os.environ['GITHUB_RUN_ID'],'qualification_commit':os.environ['GITHUB_SHA'],'branch':os.environ['GITHUB_REF_NAME']},
+              'wave4_open':False,'w3q_n3_acceptance':'PENDING_CONJUNCTIVE_8_BRANCH_MERGE','claim_ceiling':claim,
+              'exact_reentry':'Return to F.RUV.W3Q.RollingSynthesis; route only recorded failing coordinates through web.steer -> web.reentry -> local.task, then rerun affected independent W3Q qualifiers.'
+          }
+          terminal['artifact_digest']=hashlib.sha256(json.dumps(terminal,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          (out/'IntegratedCleanRoomFreshAgentQualification.v1.json').write_text(json.dumps(terminal,indent=2,sort_keys=True)+'\n')
+          summary={k:terminal[k] for k in ('branch_id','terminal_disposition','first_zero','artifact_digest','wave4_open')}
+          summary.update({'tree_a':os.environ['TREE_A'],'tree_b':os.environ['TREE_B'],'suite':os.environ['SUITE'],'clean_a':os.environ['CLEAN_A'],'clean_b':os.environ['CLEAN_B']})
+          (out/'qualification-summary.json').write_text(json.dumps(summary,indent=2,sort_keys=True)+'\n')
+          PY
+
+          git worktree remove --force "$TMP/reconstruction-a" 2>/dev/null || true
+          git worktree remove --force "$TMP/reconstruction-b" 2>/dev/null || true
+          git worktree prune || true
+          rm -rf "$TMP"
+
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ['OUT'])
+          files=[]
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and x.name not in {'MANIFEST.json','SHA256SUMS'}):
+              files.append({'path':p.relative_to(root).as_posix(),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})
+          terminal=json.loads((root/'IntegratedCleanRoomFreshAgentQualification.v1.json').read_text())
+          manifest={'schema_version':'gva06.f.ruv.w3q-b3-actions-artifact-manifest.v1','branch_id':'F.RUV.W3Q.B3','terminal_disposition':terminal['terminal_disposition'],'claim_ceiling':terminal['claim_ceiling'],'files':files,'forbidden_bulk':{'repositories':0,'virtual_environments':0,'dependency_trees':0,'wheels':0,'caches':0,'prior_wave_archives':0}}
+          (root/'MANIFEST.json').write_text(json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+          lines=[]
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and x.name!='SHA256SUMS'):
+              lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(root).as_posix()}")
+          (root/'SHA256SUMS').write_text('\n'.join(lines)+'\n')
+          print((root/'qualification-summary.json').read_text())
+          PY
+
+      - name: Verify bounded result
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'gva06-f-ruv-w3q-b3'
+          result=json.loads((root/'IntegratedCleanRoomFreshAgentQualification.v1.json').read_text())
+          assert result['branch_id']=='F.RUV.W3Q.B3' and result['wave4_open'] is False
+          assert result['terminal_disposition'] in {'QUALIFIED_FOR_PROSPECTIVE_TRAJECTORIES','SELECTIVE_REPAIR_REQUIRED','NON_IDENTIFIABLE','RIGHT_CENSORED','NO_SAFE'}
+          assert (root/'MANIFEST.json').is_file() and (root/'SHA256SUMS').is_file()
+          PY
+
+      - name: Upload pointer-slim qualification return
+        uses: actions/upload-artifact@v4
+        with:
+          name: gva06-f-ruv-w3q-b3-qualification
+          path: ${{ runner.temp }}/gva06-f-ruv-w3q-b3/
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 14
