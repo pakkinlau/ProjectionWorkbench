@@ -1,0 +1,39 @@
+name: f-ruv-w3r-b3-clean-room-fresh-agent-repair
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3r-b3-clean-room-fresh-agent-repair
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full inherited unit suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Clean-room source and wheel repair witness
+        run: |
+          bash scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh \
+            "$GITHUB_WORKSPACE" /tmp/CleanRoomFreshAgentRepair.v1.json
+          cmp \
+            /tmp/CleanRoomFreshAgentRepair.v1.json \
+            fixtures/repeat_use/CleanRoomFreshAgentRepair.v1.json
+          python - <<'PY'
+          import json
+          value=json.load(open('/tmp/CleanRoomFreshAgentRepair.v1.json'))
+          assert value['terminal_disposition']=='CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS'
+          assert value['expected_mechanical_witness']['fixture_digest']=='87e733e018764d38cce55d00082dc614122b9c8a0fcd19bdc6bffa0f04a34d29'
+          assert value['expected_mechanical_witness']['replay_digest']=='33b58812596daac7d3f1e6d7fe1776d3bd28e65426c81ded596b6642bd7c5ab2'
+          assert all(item['result']=='PASS' for item in value['checks'])
+          PY
