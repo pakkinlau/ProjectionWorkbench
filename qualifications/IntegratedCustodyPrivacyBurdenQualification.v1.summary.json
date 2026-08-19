@@ -1,0 +1,40 @@
+{
+  "artifact_id": "IntegratedCustodyPrivacyBurdenQualification.v1",
+  "axis_qualification": {
+    "axis": "Q2_INTEGRATED_CUSTODY_PRIVACY_BURDEN",
+    "conjunctive_w3q2_complete": false,
+    "qualified": true,
+    "wave4_open": false
+  },
+  "branch_id": "F.RUV.W3Q2.B2",
+  "claim_ceiling": "Independent integrated custody/privacy/burden qualification at a controlled-local mechanical ceiling only; no prospective-human readiness, human repeat-use value, retention, accumulated-history benefit, production security, legal compliance, product direction, release, merge, cutover, or owner admission.",
+  "exact_reentry": "Merge this BranchReturn only after target identity and completion receipt verification; then await all remaining W3Q2 axes before web.synthesize -> web.steer.",
+  "first_zero": "CONJUNCTIVE_W3Q2_Q1_Q3_Q4_Q5_Q6_Q7_Q8_NOT_YET_N3_ACCEPTED",
+  "noncompensatory_coordinates": {
+    "delete_tombstone_revocation": true,
+    "missingness_preserving_adapters": true,
+    "monotone_burden_accounting": true,
+    "purpose_and_consent_bound_export": true,
+    "raw_private_sealed_rejection": true,
+    "typed_custody_authority": true,
+    "verify_and_import": true
+  },
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "result_digest": "7022a08c4b4a3a93e9f55614289991d60e0ada6bb2ee552a52785c902b4efca1",
+  "schema_version": "gva06.f.ruv.integrated-custody-privacy-burden-qualification.v1",
+  "summary": {
+    "fail": 0,
+    "pass": 40,
+    "right_censored": 2,
+    "total": 42
+  },
+  "target": {
+    "base_commit": "e289a2ff01ee31f2f32e85247a2956a835e3c175",
+    "integrated_patch_sha256": "54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+    "qualified_slice_path": "src/repeat_use_harness/custody_repair.py",
+    "qualified_slice_sha256": "072ccc0faff9bc98bd878f68ee0c658c0e3f86f63c9bde439d36adf936d2f76e",
+    "target_identity": "sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+    "target_modified": false
+  },
+  "terminal_disposition": "INTEGRATED_CUSTODY_PRIVACY_BURDEN_QUALIFICATION_PASS"
+}
