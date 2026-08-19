@@ -1,0 +1,252 @@
+name: f-ruv-w3q2q-b1-corrected-target-schema-currentness-replay-qualification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q2q-b1-corrected-target-schema-currentness-replay-qualification
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      OUT_DIR: /tmp/f-ruv-w3q2q-b1-output
+      CARRIER_DIR: /tmp/f-ruv-w3q2q-b1-carrier
+      TARGET_PARENT: /tmp/f-ruv-w3q2q-b1-target
+      TARGET_ROOT: /tmp/f-ruv-w3q2q-b1-target/FinalIntegratedW3RTarget.v2.tree
+      CARRIER_ARTIFACT_ID: "9383501449"
+      CARRIER_ZIP_SHA256: 19ec1745dcab9ab269d5ef5cc62bc83beefb5d41d45135348dcb2de437222e6f
+      TARGET_IDENTITY: sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611
+      TARGET_ARCHIVE_SHA256: 3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98
+      TARGET_TREE_DIGEST: 1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download and verify corrected target carrier
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          rm -rf "$OUT_DIR" "$CARRIER_DIR" "$TARGET_PARENT"
+          mkdir -p "$OUT_DIR" "$CARRIER_DIR" "$TARGET_PARENT"
+          curl --fail --location --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/pakkinlau/ProjectionWorkbench/actions/artifacts/${CARRIER_ARTIFACT_ID}/zip" \
+            -o /tmp/GVA06_F_RUV_W3Q2R_B1_complete_target_carrier.zip
+          echo "${CARRIER_ZIP_SHA256}  /tmp/GVA06_F_RUV_W3Q2R_B1_complete_target_carrier.zip" | sha256sum -c -
+          unzip -q /tmp/GVA06_F_RUV_W3Q2R_B1_complete_target_carrier.zip -d "$CARRIER_DIR"
+          echo "${TARGET_ARCHIVE_SHA256}  ${CARRIER_DIR}/FinalIntegratedW3RTarget.v2.tar.gz" | sha256sum -c -
+          tar -xzf "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tar.gz" -C "$TARGET_PARENT"
+          test -d "$TARGET_ROOT"
+
+      - name: Verify complete target identity and tree manifest before execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$TARGET_ROOT" "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.json" "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tree-manifest.json" "$OUT_DIR/target-before-tree-digest.txt" "$OUT_DIR/TargetVerificationReceipt.v1.json" <<'PY'
+          from pathlib import Path
+          import hashlib,json,sys
+          root=Path(sys.argv[1]); target_path=Path(sys.argv[2]); manifest_path=Path(sys.argv[3])
+          digest_path=Path(sys.argv[4]); receipt_path=Path(sys.argv[5])
+          target=json.loads(target_path.read_text()); manifest=json.loads(manifest_path.read_text())
+          def canon(v): return json.dumps(v,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          def sha_file(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(1024*1024),b''): h.update(chunk)
+              return h.hexdigest()
+          computed_identity='sha256:'+hashlib.sha256(canon({k:v for k,v in target.items() if k!='target_identity'})).hexdigest()
+          computed_tree=hashlib.sha256(canon({'files':manifest['files'],'schema_version':manifest['schema_version']})).hexdigest()
+          expected={x['path'] for x in manifest['files']}
+          actual={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
+          assert target['target_identity']=='sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611'==computed_identity
+          assert target['archive_sha256']=='3a247cc88c9a5a6ccce83ad0b645c87330e6cb471ce0a3663771cc8a65dd6b98'
+          assert target['tree_digest']==manifest['tree_digest']=='1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7'==computed_tree
+          assert target['file_count']==len(manifest['files'])==171
+          assert actual==expected, {'missing':sorted(expected-actual),'extra':sorted(actual-expected)}
+          mismatches=[]
+          for item in manifest['files']:
+              p=root/item['path']
+              if p.stat().st_size!=item['size'] or sha_file(p)!=item['sha256']:
+                  mismatches.append(item['path'])
+          assert not mismatches, mismatches
+          digest_path.write_text(computed_tree+'\n')
+          receipt={
+            'schema_version':'gva06.f.ruv.corrected-target-verification-receipt.v1',
+            'artifact_id':'F.RUV.W3Q2Q.B1.TargetVerificationReceipt.v1',
+            'target_identity':computed_identity,
+            'tree_digest':computed_tree,
+            'archive_sha256':target['archive_sha256'],
+            'file_count':len(manifest['files']),
+            'per_file_hashes_verified':True,
+            'undeclared_target_files':[],
+            'carrier_artifact_id':9383501449,
+            'carrier_zip_sha256':'19ec1745dcab9ab269d5ef5cc62bc83beefb5d41d45135348dcb2de437222e6f',
+            'source_operand':'GitHub Actions artifact only',
+            'passed':True,
+            'claim_ceiling':'Target identity and tree verification only; no human-value or Wave-4 claim.'}
+          receipt['artifact_digest']=hashlib.sha256(canon(receipt)).hexdigest()
+          receipt_path.write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          PY
+          chmod -R a-w "$TARGET_ROOT"
+
+      - name: Execute complete integrated regression suite
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          cd "$TARGET_ROOT"
+          PYTHONPATH=src python -m unittest discover -s tests -v 2>&1 | tee "$OUT_DIR/full_unit_suite.log"
+          grep -q "Ran 128 tests" "$OUT_DIR/full_unit_suite.log"
+          tail -n 3 "$OUT_DIR/full_unit_suite.log" | grep -q "OK"
+
+      - name: Re-run R1-R5 schema/currentness/tamper/revocation witness
+        shell: bash
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          cd "$TARGET_ROOT"
+          PYTHONPATH=src python scripts/run_f_ruv_w3r_b7_schema_currentness_replay_repair.py \
+            --output "$OUT_DIR/SchemaCurrentnessReplayRepair.rerun.json"
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/f-ruv-w3q2q-b1-output/SchemaCurrentnessReplayRepair.rerun.json'))
+          assert x['terminal_disposition']=='SCHEMA_CURRENTNESS_REPLAY_REPAIR_PASS'
+          assert x['case_summary']=={'failed':0,'passed':31,'total':31}
+          assert all(x['repair_packages'].values())
+          PY
+
+      - name: Build isolated source and wheel replay environments
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQS="$TARGET_ROOT/fixtures/repeat_use/clean_room_build_requirements.txt"
+          PROBE="$GITHUB_WORKSPACE/qualification/f_ruv_w3q2q_b1/fresh_agent_probe.py"
+          rm -rf /tmp/q7-src-a /tmp/q7-src-b /tmp/q7-build-a /tmp/q7-build-b /tmp/q7-whl-a /tmp/q7-whl-b \
+                 /tmp/q7-source-tree-a /tmp/q7-source-tree-b /tmp/q7-build-tree-a /tmp/q7-build-tree-b \
+                 /tmp/q7-wheelhouse-a /tmp/q7-wheelhouse-b
+          for dst in /tmp/q7-source-tree-a /tmp/q7-source-tree-b /tmp/q7-build-tree-a /tmp/q7-build-tree-b; do
+            mkdir -p "$dst"
+            tar -xzf "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tar.gz" -C "$dst" --strip-components=1
+          done
+          for envdir in /tmp/q7-src-a /tmp/q7-src-b /tmp/q7-build-a /tmp/q7-build-b; do
+            python -m venv "$envdir"
+            "$envdir/bin/python" -m pip install --disable-pip-version-check -r "$REQS"
+          done
+          PIP_NO_INDEX=1 /tmp/q7-src-a/bin/python -m pip install --disable-pip-version-check --no-deps --no-build-isolation /tmp/q7-source-tree-a
+          PIP_NO_INDEX=1 /tmp/q7-src-b/bin/python -m pip install --disable-pip-version-check --no-deps --no-build-isolation /tmp/q7-source-tree-b
+          mkdir -p /tmp/q7-wheelhouse-a /tmp/q7-wheelhouse-b
+          PIP_NO_INDEX=1 /tmp/q7-build-a/bin/python -m pip wheel --disable-pip-version-check --no-deps --no-build-isolation /tmp/q7-build-tree-a -w /tmp/q7-wheelhouse-a
+          PIP_NO_INDEX=1 /tmp/q7-build-b/bin/python -m pip wheel --disable-pip-version-check --no-deps --no-build-isolation /tmp/q7-build-tree-b -w /tmp/q7-wheelhouse-b
+          WHEEL_A=$(find /tmp/q7-wheelhouse-a -name '*.whl' -type f -print -quit)
+          WHEEL_B=$(find /tmp/q7-wheelhouse-b -name '*.whl' -type f -print -quit)
+          test -n "$WHEEL_A" -a -n "$WHEEL_B"
+          sha256sum "$WHEEL_A" "$WHEEL_B" > "$OUT_DIR/wheel-build-sha256.txt"
+          python -m venv /tmp/q7-whl-a
+          python -m venv /tmp/q7-whl-b
+          PIP_NO_INDEX=1 /tmp/q7-whl-a/bin/python -m pip install --disable-pip-version-check --no-deps "$WHEEL_A"
+          PIP_NO_INDEX=1 /tmp/q7-whl-b/bin/python -m pip install --disable-pip-version-check --no-deps "$WHEEL_B"
+          cd /tmp
+          env -u PYTHONPATH PYTHONNOUSERSITE=1 FORBIDDEN_CHECKOUT="$TARGET_ROOT" /tmp/q7-src-a/bin/python "$PROBE" --output "$OUT_DIR/fresh-source-a.json"
+          env -u PYTHONPATH PYTHONNOUSERSITE=1 FORBIDDEN_CHECKOUT="$TARGET_ROOT" /tmp/q7-src-b/bin/python "$PROBE" --output "$OUT_DIR/fresh-source-b.json"
+          env -u PYTHONPATH PYTHONNOUSERSITE=1 FORBIDDEN_CHECKOUT="$TARGET_ROOT" /tmp/q7-whl-a/bin/python "$PROBE" --output "$OUT_DIR/fresh-wheel-a.json"
+          env -u PYTHONPATH PYTHONNOUSERSITE=1 FORBIDDEN_CHECKOUT="$TARGET_ROOT" /tmp/q7-whl-b/bin/python "$PROBE" --output "$OUT_DIR/fresh-wheel-b.json"
+          cmp "$OUT_DIR/fresh-source-a.json" "$OUT_DIR/fresh-source-b.json"
+          cmp "$OUT_DIR/fresh-source-a.json" "$OUT_DIR/fresh-wheel-a.json"
+          cmp "$OUT_DIR/fresh-source-a.json" "$OUT_DIR/fresh-wheel-b.json"
+
+      - name: Verify corrected target remains byte-identical
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod -R u+w "$TARGET_ROOT"
+          python - "$TARGET_ROOT" "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tree-manifest.json" "$OUT_DIR/target-after-tree-digest.txt" <<'PY'
+          from pathlib import Path
+          import hashlib,json,sys
+          root=Path(sys.argv[1]); manifest=json.loads(Path(sys.argv[2]).read_text()); out=Path(sys.argv[3])
+          def canon(v): return json.dumps(v,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
+          def sha_file(p):
+              h=hashlib.sha256()
+              with p.open('rb') as f:
+                  for chunk in iter(lambda:f.read(1024*1024),b''): h.update(chunk)
+              return h.hexdigest()
+          expected={x['path'] for x in manifest['files']}
+          actual={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file() and '__pycache__' not in p.parts and not p.name.endswith('.pyc')}
+          assert actual==expected, {'missing':sorted(expected-actual),'extra':sorted(actual-expected)}
+          for item in manifest['files']:
+              p=root/item['path']; assert p.stat().st_size==item['size']; assert sha_file(p)==item['sha256']
+          digest=hashlib.sha256(canon({'files':manifest['files'],'schema_version':manifest['schema_version']})).hexdigest()
+          assert digest==manifest['tree_digest']=='1a5ce04666a042d8789a3ee0dc0761e530250a633b15a3d0f40cd2a896bfa0d7'
+          out.write_text(digest+'\n')
+          PY
+          cmp "$OUT_DIR/target-before-tree-digest.txt" "$OUT_DIR/target-after-tree-digest.txt"
+
+      - name: Synthesize corrected-target Q7 terminal and canonical returns
+        shell: bash
+        run: |
+          set -euo pipefail
+          python qualification/f_ruv_w3q2q_b1/run_qualification.py \
+            --target-root "$TARGET_ROOT" \
+            --target-json "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.json" \
+            --tree-manifest "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tree-manifest.json" \
+            --archive "$CARRIER_DIR/FinalIntegratedW3RTarget.v2.tar.gz" \
+            --full-suite-log "$OUT_DIR/full_unit_suite.log" \
+            --b7-rerun "$OUT_DIR/SchemaCurrentnessReplayRepair.rerun.json" \
+            --fresh-source-a "$OUT_DIR/fresh-source-a.json" \
+            --fresh-source-b "$OUT_DIR/fresh-source-b.json" \
+            --fresh-wheel-a "$OUT_DIR/fresh-wheel-a.json" \
+            --fresh-wheel-b "$OUT_DIR/fresh-wheel-b.json" \
+            --target-before "$OUT_DIR/target-before-tree-digest.txt" \
+            --target-after "$OUT_DIR/target-after-tree-digest.txt" \
+            --output "$OUT_DIR/CorrectedTargetSchemaCurrentnessReplayQualification.v1.json"
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          out=Path('/tmp/f-ruv-w3q2q-b1-output')
+          before=(out/'target-before-tree-digest.txt').read_text().strip()
+          after=(out/'target-after-tree-digest.txt').read_text().strip()
+          receipt={
+            'schema_version':'gva06.f.ruv.target-nonmutation-receipt.v1',
+            'artifact_id':'F.RUV.W3Q2Q.B1.TargetNonmutationReceipt.v1',
+            'target_identity':'sha256:208226ea0c9aa010dd7d9820d4e64d6ec2e6c44fb26fc29074713a0cc6aab611',
+            'before_tree_digest':before,'after_tree_digest':after,
+            'target_modified_by_qualifier':before!=after,
+            'passed':before==after,
+            'claim_ceiling':'Target nonmutation and controlled Q7 qualification mechanics only.'}
+          receipt['artifact_digest']=hashlib.sha256(json.dumps(receipt,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          (out/'TargetNonmutationReceipt.v1.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          PY
+          python qualification/f_ruv_w3q2q_b1/emit_returns.py \
+            --result "$OUT_DIR/CorrectedTargetSchemaCurrentnessReplayQualification.v1.json" \
+            --output-dir "$OUT_DIR"
+          cp qualification/f_ruv_w3q2q_b1/TargetPointer.v2.json "$OUT_DIR/"
+          cp qualification/f_ruv_w3q2q_b1/README.md "$OUT_DIR/BRANCH_README.md"
+          (cd "$OUT_DIR" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
+
+      - name: Upload pointer-slim Q7 qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W3Q2Q_B1_corrected_target_q7_qualification
+          path: /tmp/f-ruv-w3q2q-b1-output
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 9
