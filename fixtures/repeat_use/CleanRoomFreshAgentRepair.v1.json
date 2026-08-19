@@ -1,0 +1,125 @@
+{
+  "artifact_digest": "c0c54cbb4afd10a74a789ea20db48952fbbd6e4a2b7b187ba76703db60e53798",
+  "artifact_id": "CleanRoomFreshAgentRepair.v1",
+  "artifact_state": "EXECUTED_VALIDATED_MERGEABLE_CANDIDATE",
+  "branch_id": "F.RUV.W3R.B3",
+  "checks": [
+    {
+      "id": "CR01",
+      "name": "build tools exactly pinned",
+      "result": "PASS"
+    },
+    {
+      "id": "CR02",
+      "name": "isolated source installation",
+      "result": "PASS"
+    },
+    {
+      "id": "CR03",
+      "name": "installed source entrypoint",
+      "result": "PASS"
+    },
+    {
+      "id": "CR04",
+      "name": "source-install replay twice",
+      "result": "PASS"
+    },
+    {
+      "id": "CR05",
+      "name": "source expected terminal and digests",
+      "result": "PASS"
+    },
+    {
+      "id": "CR06",
+      "name": "isolated wheel build",
+      "result": "PASS"
+    },
+    {
+      "id": "CR07",
+      "name": "isolated wheel installation",
+      "result": "PASS"
+    },
+    {
+      "id": "CR08",
+      "name": "installed wheel entrypoint",
+      "result": "PASS"
+    },
+    {
+      "id": "CR09",
+      "name": "wheel-install replay twice",
+      "result": "PASS"
+    },
+    {
+      "id": "CR10",
+      "name": "source-wheel fixture byte parity",
+      "result": "PASS"
+    },
+    {
+      "id": "CR11",
+      "name": "module paths outside repository",
+      "result": "PASS"
+    },
+    {
+      "id": "CR12",
+      "name": "no PYTHONPATH/user-site/cache dependence",
+      "result": "PASS"
+    },
+    {
+      "id": "CR13",
+      "name": "prior context pointer-only",
+      "result": "PASS"
+    }
+  ],
+  "claim_ceiling": "Clean-room source-install, wheel-install, installed-entrypoint, fresh-agent, and deterministic R0 mechanical replay repair only; no human repeat-use value, retention, accumulated-history benefit, product direction, interpersonal/network value, market demand, release, merge, cutover, or owner-admission claim.",
+  "exact_reentry": "Merge only through Wave-3R N3 after independent requalification; prospective human trajectories remain closed until all noncompensatory Wave-3R repair coordinates pass.",
+  "expected_mechanical_witness": {
+    "causal_terminal": "RIGHT_CENSORED",
+    "fixture_digest": "87e733e018764d38cce55d00082dc614122b9c8a0fcd19bdc6bffa0f04a34d29",
+    "human_value_supported": false,
+    "replay_digest": "33b58812596daac7d3f1e6d7fe1776d3bd28e65426c81ded596b6642bd7c5ab2"
+  },
+  "fresh_agent_guards": {
+    "build_virtual_environment_distinct": true,
+    "pip_cache_disabled": true,
+    "prior_wave_payload_embedded": false,
+    "project_install_no_index": true,
+    "python_user_site_disabled": true,
+    "pythonpath_unset": true,
+    "source_and_wheel_virtual_environments_distinct": true,
+    "wheel_build_no_index": true,
+    "wheel_install_no_index": true,
+    "working_directory_outside_repository": true
+  },
+  "nonclaims": [
+    "No live-user repeat-use value is observed.",
+    "No retention or accumulated-history causal effect is established.",
+    "No product direction, interpersonal/network value, hosted necessity, market demand, or willingness-to-pay claim is established.",
+    "No release, merge, cutover, or owner admission is established."
+  ],
+  "pinned_build_requirements": [
+    "packaging==25.0",
+    "setuptools==80.9.0",
+    "wheel==0.45.1"
+  ],
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "reproduction": {
+    "command": "python scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.py --output <CleanRoomFreshAgentRepair.v1.json>",
+    "installed_entrypoint": "pws-ruv fixture --output <dir>",
+    "source_install": "pip install --no-index --no-deps --no-build-isolation <repo>",
+    "wheel_build": "pip wheel --no-index --no-deps --no-build-isolation <repo>",
+    "wheel_install": "pip install --no-index --no-deps <wheel>"
+  },
+  "schema_version": "gva06.f.ruv.w3r.clean-room-fresh-agent-repair.v1",
+  "source_horizon": {
+    "canonical_route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+    "predecessor_qualification": {
+      "artifact_id": "CleanRoomRehydrationQualification.v1",
+      "embedded_bytes": false,
+      "sha256": "090eb6ed337cf8a3044e2badc8493cdc91f923f21dba6592c406874d523d1e0b"
+    },
+    "projectionworkbench_harness_base_commit": "510c60889d9ed7d3014cb6d9d6607ef7305c141c",
+    "stewardstack_commit": "a644409f293609ec2e6f0cb230ba0799d455ec1d"
+  },
+  "terminal_disposition": "CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS",
+  "wave_id": "F.RUV.W3R"
+}
