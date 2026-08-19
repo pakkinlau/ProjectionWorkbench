@@ -33,6 +33,15 @@ jobs:
           tar -xzf /tmp/f-ruv-w3r-b1-payload.tar.gz -C .
           rm -rf .gva-transfer
           rm -f .github/workflows/apply-f-ruv-w3r-b1-payload.yml
+          python - <<'PY'
+          from pathlib import Path
+          init = Path('src/repeat_use_harness/__init__.py')
+          text = init.read_text(encoding='utf-8')
+          marker = 'B2_CASE_SCHEMA = "gva06.f.ruv.oracle-case.v1"'
+          if marker not in text:
+              text = text.rstrip() + '\n\n' + marker + '\n'
+          init.write_text(text, encoding='utf-8')
+          PY
       - name: Validate full repository and bounded repair
         shell: bash
         run: |
