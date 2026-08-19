@@ -105,8 +105,8 @@ jobs:
 
           RA=99; RB=99
           if [[ "$FETCH_OK" == 1 ]]; then
-            reconstruct reconstruction-a; RA=$?
-            reconstruct reconstruction-b; RB=$?
+            if reconstruct reconstruction-a; then RA=0; else RA=$?; fi
+            if reconstruct reconstruction-b; then RB=0; else RB=$?; fi
           fi
 
           TREE_A="$(cat "$OUT/reconstruction-a-tree-sha1.txt" 2>/dev/null || true)"
