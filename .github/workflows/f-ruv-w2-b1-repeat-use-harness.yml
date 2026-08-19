@@ -1,0 +1,29 @@
+name: f-ruv-w2-b1-repeat-use-harness
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w2-b1-repeat-use-value-harness
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Unit tests
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Deterministic fixture replay
+        run: |
+          PYTHONPATH=src python -m repeat_use_harness fixture --output /tmp/ruv-a
+          PYTHONPATH=src python -m repeat_use_harness fixture --output /tmp/ruv-b
+          cmp /tmp/ruv-a/fixture_receipt.json /tmp/ruv-b/fixture_receipt.json
+          python - <<'PY'
+          import json
+          result=json.load(open('/tmp/ruv-a/replay.json'))
+          assert result['trajectory']['causal_terminal']=='RIGHT_CENSORED'
+          assert result['trajectory']['evidence_scope']['human_value_supported'] is False
+          PY
