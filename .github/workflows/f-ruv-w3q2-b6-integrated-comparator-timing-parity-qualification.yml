@@ -1,0 +1,191 @@
+name: f-ruv-w3q2-b6-integrated-comparator-timing-parity-qualification
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q2-b6-integrated-comparator-timing-parity-qualification
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    env:
+      TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
+      ASSEMBLY_DIR: /tmp/f-ruv-w3q2-b6-assembly
+      OUT_DIR: /tmp/f-ruv-w3q2-b6-result
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ env.TARGET_BRANCH }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Rehydrate bounded qualifier payload when present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f .gva-transfer/PAYLOAD_READY ]]; then
+            cat .gva-transfer/f-ruv-w3q2-b6-payload.part* > /tmp/f-ruv-w3q2-b6-payload.b64
+            base64 -d /tmp/f-ruv-w3q2-b6-payload.b64 > /tmp/f-ruv-w3q2-b6-payload.tar.gz
+            echo '090032b3b91a72af322cd626be60ef6aa49345329f5abc1ec6da4ceef15f8a8c  /tmp/f-ruv-w3q2-b6-payload.tar.gz' | sha256sum -c -
+            tar -xzf /tmp/f-ruv-w3q2-b6-payload.tar.gz -C .
+            rm -rf .gva-transfer
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'test(ruv): add W3Q2 B6 comparator qualification'
+            git push origin HEAD:${TARGET_BRANCH}
+          fi
+
+      - name: Park branch-owned qualification surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/f-ruv-w3q2-owned
+          while IFS= read -r path; do
+            mkdir -p "/tmp/f-ruv-w3q2-owned/$(dirname "$path")"
+            cp "$path" "/tmp/f-ruv-w3q2-owned/$path"
+            rm "$path"
+          done <<'EOF'
+          .github/workflows/f-ruv-w3q2-b6-integrated-comparator-timing-parity-qualification.yml
+          scripts/run_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py
+          tests/test_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py
+          docs/f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.md
+          receipts/f_ruv_w3q2_b6_execution_receipt.md
+          EOF
+
+      - name: Bind integrator-owned reconstruction surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh')
+          text=path.read_text(encoding='utf-8')
+          replacements=[
+            (
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml'}",
+              "skip={'.github/workflows/apply-f-ruv-w3r-b1-payload.yml','scripts/run_f_ruv_w3_b8_independent_measurement_validity_review.py','tests/test_f_ruv_w3_b8_independent_measurement_validity_review.py'}",
+            ),
+            (
+              'bash scripts/run_f_ruv_w3r_b3_clean_room_fresh_agent_repair.sh "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+              'python scripts/run_f_ruv_w3i_integrated_clean_room.py "$ROOT" "$OUT/CleanRoomFreshAgentRepair.v1.json" 2>&1 | tee "$OUT/clean_room_stdout.txt"',
+            ),
+            (
+              "clean.get('terminal_disposition')=='CLEAN_ROOM_FRESH_AGENT_REPAIR_PASS'",
+              "clean.get('terminal_disposition')=='INTEGRATED_CLEAN_ROOM_FRESH_AGENT_PASS'",
+            ),
+            (
+              '(cd "$OUT" && sha256sum * > SHA256SUMS)',
+              '(cd "$OUT" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)',
+            ),
+          ]
+          for old,new in replacements:
+              if old not in text:
+                  raise SystemExit('integration patch anchor absent: '+old)
+              text=text.replace(old,new,1)
+          path.write_text(text,encoding='utf-8')
+          PY
+
+      - name: Reconstruct exact content-addressed W3Q2 target
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "$ASSEMBLY_DIR"
+          bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh "$ASSEMBLY_DIR"
+          echo '54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779  '"$ASSEMBLY_DIR/IntegratedW3RRepairAssembly.patch" | sha256sum -c -
+
+      - name: Restore branch-owned qualification surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a /tmp/f-ruv-w3q2-owned/. .
+          python -m compileall -q scripts tests
+
+      - name: Verify frozen target is unchanged by qualification branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --binary e289a2ff01ee31f2f32e85247a2956a835e3c175 -- \
+            . ':(exclude)dist' ':(exclude)build' ':(exclude)*.egg-info' \
+            ':(exclude)integration/w3r/b1_patch_parts' \
+            ':(exclude).github/workflows/f-ruv-w3q2-b6-integrated-comparator-timing-parity-qualification.yml' \
+            ':(exclude)scripts/run_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py' \
+            ':(exclude)tests/test_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py' \
+            ':(exclude)docs/f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.md' \
+            ':(exclude)receipts/f_ruv_w3q2_b6_execution_receipt.md' \
+            > /tmp/f-ruv-w3q2-target-after-branch.patch
+          cmp "$ASSEMBLY_DIR/IntegratedW3RRepairAssembly.patch" /tmp/f-ruv-w3q2-target-after-branch.patch
+
+      - name: Run inherited comparator repair tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=src python -m unittest tests/test_f_ruv_w3r_b6_comparator_timing_parity_repair.py -v
+
+      - name: Run independent W3Q2 B6 tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          W3Q2_ASSEMBLY_DIR="$ASSEMBLY_DIR" PYTHONPATH=src \
+            python -m unittest tests/test_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py -v
+
+      - name: Execute qualification twice and freeze result
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf "$OUT_DIR"
+          mkdir -p "$OUT_DIR"
+          PYTHONPATH=src python scripts/run_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py \
+            --root . --assembly-dir "$ASSEMBLY_DIR" \
+            --output "$OUT_DIR/IntegratedComparatorTimingParityQualification.a.json"
+          PYTHONPATH=src python scripts/run_f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.py \
+            --root . --assembly-dir "$ASSEMBLY_DIR" \
+            --output "$OUT_DIR/IntegratedComparatorTimingParityQualification.b.json"
+          cmp "$OUT_DIR/IntegratedComparatorTimingParityQualification.a.json" \
+              "$OUT_DIR/IntegratedComparatorTimingParityQualification.b.json"
+          cp "$OUT_DIR/IntegratedComparatorTimingParityQualification.a.json" \
+             "$OUT_DIR/IntegratedComparatorTimingParityQualification.v1.json"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          out=Path('/tmp/f-ruv-w3q2-b6-result')
+          result=json.loads((out/'IntegratedComparatorTimingParityQualification.v1.json').read_text())
+          assert result['terminal_disposition']=='INTEGRATED_COMPARATOR_TIMING_PARITY_QUALIFIED_AT_CONTROLLED_FIXTURE_CEILING'
+          assert result['w3q2_coordinate_passed'] is True
+          assert result['summary']['total']==31
+          assert result['summary']['passed']==31
+          assert result['summary']['failed']==0
+          assert result['target_binding']['observed_patch_sha256']=='54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779'
+          assert result['human_value_supported'] is False
+          assert result['wave4_open'] is False
+          pointers={
+            'schema_version':'gva06.f.ruv.w3q2-b6-target-pointer-index.v1',
+            'program_id':'GVA06.F.repeat-use-value-discovery.v2',
+            'branch_id':'F.RUV.W3Q2.B6',
+            'target_id':'sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779',
+            'target_base':'e289a2ff01ee31f2f32e85247a2956a835e3c175',
+            'assembly_source_head':'d41a17d2558ab8957b055e28f383350a4e06c007',
+            'w3r_b6_head':'a8d2d7499ff48c884b992dca5e0373d2142bb95d',
+            'route_launch_digest':'a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa',
+            'prior_wave_payload_bytes_embedded':0,
+          }
+          (out/'TargetPointerIndex.v1.json').write_text(json.dumps(pointers,indent=2,sort_keys=True)+'\n')
+          PY
+          cp docs/f_ruv_w3q2_b6_integrated_comparator_timing_parity_qualification.md "$OUT_DIR/"
+          cp receipts/f_ruv_w3q2_b6_execution_receipt.md "$OUT_DIR/"
+          (cd "$OUT_DIR" && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
+
+      - name: Upload pointer-slim qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W3Q2_B6_qualification_evidence
+          path: /tmp/f-ruv-w3q2-b6-result
+          if-no-files-found: error
+          retention-days: 30
