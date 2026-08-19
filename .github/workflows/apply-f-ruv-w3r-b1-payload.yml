@@ -35,6 +35,17 @@ jobs:
           rm -f .github/workflows/apply-f-ruv-w3r-b1-payload.yml
           python - <<'PY'
           from pathlib import Path
+
+          harness = Path('src/repeat_use_harness/harness.py')
+          text = harness.read_text(encoding='utf-8')
+          anchor = 'from .core import *\n'
+          additions = 'from .admission import *\nfrom .normalization import *\n'
+          if 'from .admission import *' not in text:
+              if anchor not in text:
+                  raise SystemExit('harness import anchor absent')
+              text = text.replace(anchor, anchor + additions, 1)
+          harness.write_text(text, encoding='utf-8')
+
           init = Path('src/repeat_use_harness/__init__.py')
           text = init.read_text(encoding='utf-8')
           marker = 'B2_CASE_SCHEMA = "gva06.f.ruv.oracle-case.v1"'
