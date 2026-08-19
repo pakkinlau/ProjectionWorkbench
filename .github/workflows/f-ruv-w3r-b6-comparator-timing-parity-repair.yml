@@ -1,0 +1,30 @@
+name: f-ruv-w3r-b6-comparator-timing-parity-repair
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3r-b6-comparator-timing-parity-repair
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full unit suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Reproduce comparator timing repair
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3r_b6_comparator_timing_parity_repair.py \
+            --output /tmp/ComparatorTimingParityRepair.v1.json \
+            --corpus-output /tmp/SyntheticTimingParityCorpus.v2.json
+          python - <<'PY'
+          import json
+          repair=json.load(open('/tmp/ComparatorTimingParityRepair.v1.json'))
+          corpus=json.load(open('/tmp/SyntheticTimingParityCorpus.v2.json'))
+          assert repair['terminal_disposition']=='COMPARATOR_TIMING_PARITY_REPAIR_IMPLEMENTED_AT_CONTROLLED_FIXTURE_CEILING'
+          assert repair['wave4_open'] is False
+          assert repair['w3q_requalification_required'] is True
+          assert corpus['baseline_timing_parity_receipt']['noncompensatory_pass'] is True
+          PY
