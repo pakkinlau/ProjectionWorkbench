@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - agent/f-ruv-w3q-b3-integrated-clean-room-fresh-agent-qualification
+  pull_request:
+    branches:
+      - agent/f-ruv-w3-b8-independent-measurement-validity-review
   workflow_dispatch:
 
 permissions:
