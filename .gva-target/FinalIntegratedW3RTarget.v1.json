@@ -1,0 +1,64 @@
+{
+  "artifact_id": "FinalIntegratedW3RTarget.v1",
+  "claim_ceiling": "Controlled integration and mechanical qualification preparation only; no human repeat-use value, Wave-4 launch, release, merge, cutover, or owner admission.",
+  "formed_at": "2026-08-20T03:00:00+08:00",
+  "github_publication": {
+    "blocking_message": "GitHub Actions token refused update because the integrated delta contains workflow files and the token lacks workflow-update permission.",
+    "qualification_usage": "W3Q2 must reconstruct the exact target from base_commit + integrated_patch_sha256; all eight qualifiers must bind this same target_identity.",
+    "scientific_or_semantic_blocker": false,
+    "status": "REMOTE_BRANCH_FREEZE_BLOCKED_BY_WORKFLOW_PERMISSION_ONLY",
+    "validated_local_commit_short_sha": "d8a6623"
+  },
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "reconstruction": {
+    "assembly_artifact_digest": "f48e690ea1896973bbedf44ce3e7ec621766e1204fffa38aa87c1a6ba911f5ff",
+    "assembly_evidence_zip_sha256": "606e400a116d3cd07cd7bcd196973aa8ff954be11d0997ec9e4f5e8cdf81be7f",
+    "base_commit": "e289a2ff01ee31f2f32e85247a2956a835e3c175",
+    "integrated_patch": "evidence/IntegratedW3RRepairAssembly.patch",
+    "integrated_patch_sha256": "54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779"
+  },
+  "repository": "pakkinlau/ProjectionWorkbench",
+  "schema_version": "gva06.f.ruv.final-integrated-w3r-target.v1",
+  "source_heads": {
+    "B1": "bb409dba352825b95eb2176097d43fa13150514e",
+    "B2": "3434f231f448643e98c75393734f0f1f5e117d54",
+    "B3": "f626a674a8b10cf3c97b662bb9ab9ef70453ec7d",
+    "B4": "aaccbe75756f6e5ed4a884ce66146d6e1475b2ed",
+    "B5": "a97cd81cb861a152e19ea7aa26b3f2f33501c45f",
+    "B6": "a8d2d7499ff48c884b992dca5e0373d2142bb95d",
+    "B7": "85dbf8dd8e133e92612a0f6cbb8f4892f78e0c03",
+    "base": "e289a2ff01ee31f2f32e85247a2956a835e3c175"
+  },
+  "status": "FROZEN_REPRODUCIBLE_ASSEMBLY_TARGET",
+  "target_identity": "sha256:54ad0ee3651b391ff965fb5bc89954e66e061d4e6ff1e8504d090a6b427e5779",
+  "validation": {
+    "assembly_checks": {
+      "clean_room": true,
+      "comparator_timing": true,
+      "custody_privacy_burden": true,
+      "noninterference": true,
+      "original_measurement_attacks_closed": true,
+      "schema_replay": true,
+      "terminal_admission": true
+    },
+    "assembly_terminal": "INTEGRATED_W3R_REPAIR_ASSEMBLY_PASS_AT_CONTROLLED_LOCAL_CEILING",
+    "clean_room_checks": {
+      "human_value_supported": false,
+      "outside_checkout_source": true,
+      "outside_checkout_wheel": true,
+      "right_censored_mechanical_terminal": true,
+      "source_source_byte_parity": true,
+      "source_wheel_byte_parity": true,
+      "wheel_wheel_byte_parity": true
+    },
+    "clean_room_fixture_digest": "de35f75b8fec029126c1566c9d9f8a18745b85d2d4805310262a6f719017321c",
+    "clean_room_replay_digest": "bbed587ac730812c4b66ed6428142c4fdf9d8b9a92a840c04b472e577bd09f3d",
+    "clean_room_terminal": "INTEGRATED_CLEAN_ROOM_FRESH_AGENT_PASS",
+    "full_repository_tests": {
+      "failed": 0,
+      "passed": 128
+    },
+    "original_integrated_attacks_remaining": 0
+  },
+  "wave4_authorized": false
+}

@@ -1,0 +1,8 @@
+{
+  "artifact_id": "IntegratedSchemaCurrentnessReplayQualification.script.carrier",
+  "encoding": "base64(gzip(python))",
+  "gzip_bytes": 6868,
+  "gzip_sha256": "3bbcb320ad176c729595b0d2383c21d9b3a3d9f9f4331f695762da1601abbe27",
+  "raw_bytes": 24410,
+  "raw_sha256": "a10902c75f7e22bc96d4b6f14ccc00811db74b5a453a85035a44f6116084d15b"
+}
