@@ -1,0 +1,42 @@
+name: f-ruv-w3r-b7-schema-currentness-replay-repair
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3r-b7-schema-currentness-replay-repair
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full unit suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Reproduce 31-case repair witness
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3r_b7_schema_currentness_replay_repair.py --output /tmp/SchemaCurrentnessReplayRepair.v1.json
+          python - <<'PY'
+          import json
+          result=json.load(open('/tmp/SchemaCurrentnessReplayRepair.v1.json'))
+          assert result['terminal_disposition']=='SCHEMA_CURRENTNESS_REPLAY_REPAIR_PASS'
+          assert result['case_summary']=={'failed': 0, 'passed': 31, 'total': 31}
+          assert all(result['repair_packages'].values())
+          assert result['independent_requalification_complete'] is False
+          assert result['wave4_open'] is False
+          PY
+      - name: Build and clean-install R6 operand smoke
+        run: |
+          python setup.py sdist bdist_wheel
+          mkdir -p /tmp/ruv-wheel
+          python -m pip install --no-index --no-deps --target /tmp/ruv-wheel dist/*.whl
+          PYTHONPATH=/tmp/ruv-wheel python - <<'PY'
+          from repeat_use_harness import build_cross_version_replay_operand
+          operand = build_cross_version_replay_operand()
+          assert operand['unknown_major_rejected'] is True
+          assert operand['source_unchanged'] is True
+          assert operand['independent_requalification_required'] is True
+          PY
