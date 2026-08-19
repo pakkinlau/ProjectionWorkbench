@@ -1,0 +1,52 @@
+name: f-ruv-w3q-b6-comparator-timing-parity-requalification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b6-comparator-timing-parity-requalification
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Current integrated qualification suites
+        run: |
+          set -euo pipefail
+          for pattern in \
+            test_f_ruv_w3q_b6_comparator_timing_parity_requalification.py \
+            test_f_ruv_w3r_b6_comparator_timing_parity_repair.py \
+            test_f_ruv_w3r_b2_custody_privacy_burden_repair.py \
+            test_f_ruv_w3r_b7_schema_currentness_replay_repair.py \
+            test_counterfactual_assignment_repair.py \
+            test_instrumentation_noninterference_change.py \
+            test_instrumentation_noninterference_epoch.py \
+            test_instrumentation_noninterference_qualification.py \
+            test_repeat_use_harness.py
+          do
+            PYTHONPATH=src python -m unittest discover -s tests -p "$pattern" -v
+          done
+      - name: Reproduce W3Q B6 disposition
+        run: |
+          python scripts/run_f_ruv_w3q_b6_comparator_timing_parity_requalification.py --output /tmp/ComparatorTimingParityRequalification.v1.json
+          python - <<'PY'
+          import json
+          result=json.load(open('/tmp/ComparatorTimingParityRequalification.v1.json'))
+          assert result['terminal_disposition']=='RIGHT_CENSORED_INTEGRATED_COMPARATOR_REPAIR_OPERAND_ABSENT'
+          assert result['missing_components']==['B1']
+          assert result['case_summary']=={'not_passed': 2, 'passed': 8, 'total': 10}
+          assert result['branch_completion_predicate']['result']=='PASS'
+          assert result['wave4_open'] is False
+          assert result['human_value_supported'] is False
+          PY
+      - name: Record superseded historical negative-test boundary
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          assert Path('tests/test_f_ruv_w3_b8_independent_measurement_validity_review.py').exists()
+          print('Historical W3.B8 defect-reproduction test is intentionally excluded: its expected defects are superseded by W3R repairs and require W3Q integration retirement, not B6 mutation.')
+          PY
