@@ -1,0 +1,65 @@
+name: f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Full repository suite
+        run: PYTHONPATH=src python -m unittest discover -s tests -v
+      - name: Execute independent W3Q.B5 qualifier
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b5_counterfactual_assignment_requalification.py --output fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.load(open('fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json'))
+          assert x['counterfactual_surface_requalified'] is True
+          assert x['terminal_disposition'] in {
+              'RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT',
+              'COUNTERFACTUAL_ASSIGNMENT_REQUALIFICATION_PASS_AT_INTEGRATED_CONTROLLED_CEILING',
+          }
+          assert x['prior_wave_payload_bytes_embedded']==0
+          assert x['wave_4_open_from_this_branch'] is False
+          Path('receipts').mkdir(exist_ok=True)
+          receipt = {
+              'schema_version':'gva06.f.ruv.branch-completion-receipt.v1',
+              'branch_id':'F.RUV.W3Q.B5',
+              'terminal_object':'CounterfactualAssignmentRequalification.v1',
+              'terminal_disposition':x['terminal_disposition'],
+              'case_count':x['case_count'],
+              'passed':x['passed'],
+              'failed':x['failed'],
+              'counterfactual_surface_requalified':x['counterfactual_surface_requalified'],
+              'wave_4_open':False,
+              'n3_acceptance':'pending',
+              'prior_wave_payload_bytes_embedded':0,
+              'content_digest':x['content_digest'],
+          }
+          Path('receipts/f_ruv_w3q_b5_branch_completion_receipt.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          PY
+      - name: Persist deterministic branch evidence
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json receipts/f_ruv_w3q_b5_branch_completion_receipt.json
+          if ! git diff --cached --quiet; then
+            git commit -m "test(ruv): persist W3Q.B5 requalification evidence"
+            git push origin HEAD:refs/heads/agent/f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+          fi
