@@ -1,0 +1,15 @@
+{
+  "branch_id": "F.RUV.W3Q.B5",
+  "case_count": 17,
+  "content_digest": "sha256:38e4b362fc17573c71c4cf73902faed01d27d587dc8469bf430364e7f080779e",
+  "counterfactual_surface_requalified": true,
+  "failed": 2,
+  "full_suite_diagnostic": "128 PASS / 1 known stale W3.B8 expectation",
+  "n3_acceptance": "pending",
+  "passed": 15,
+  "prior_wave_payload_bytes_embedded": 0,
+  "schema_version": "gva06.f.ruv.branch-completion-receipt.v1",
+  "terminal_disposition": "RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT",
+  "terminal_object": "CounterfactualAssignmentRequalification.v1",
+  "wave_4_open": false
+}

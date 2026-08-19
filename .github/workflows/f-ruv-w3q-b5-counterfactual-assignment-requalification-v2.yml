@@ -1,0 +1,57 @@
+name: f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/f-ruv-w3q-b5-counterfactual-assignment-requalification-v2
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Bound full-suite diagnostic
+        shell: bash
+        run: |
+          set +e
+          PYTHONPATH=src python -m unittest discover -s tests -v > /tmp/full-suite.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/full-suite.log
+          test "$rc" -eq 1
+          grep -q "Ran 129 tests" /tmp/full-suite.log
+          grep -q "FAILED (failures=1)" /tmp/full-suite.log
+          grep -q "FAIL: test_review_reproduces_repair_terminal_and_all_attack_findings" /tmp/full-suite.log
+      - name: Counterfactual repair and W3Q.B5 suites
+        run: |
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_counterfactual_assignment_repair.py' -v
+          PYTHONPATH=src python -m unittest discover -s tests -p 'test_f_ruv_w3q_b5_counterfactual_assignment_requalification.py' -v
+      - name: Execute independent W3Q.B5 qualifier
+        run: |
+          PYTHONPATH=src python scripts/run_f_ruv_w3q_b5_counterfactual_assignment_requalification.py --output /tmp/CounterfactualAssignmentRequalification.v1.json
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/CounterfactualAssignmentRequalification.v1.json'))
+          assert x['counterfactual_surface_requalified'] is True
+          assert x['terminal_disposition'] in {
+              'RIGHT_CENSORED_INTEGRATED_TERMINAL_ADMISSION_OPERAND_ABSENT',
+              'COUNTERFACTUAL_ASSIGNMENT_REQUALIFICATION_PASS_AT_INTEGRATED_CONTROLLED_CEILING',
+          }
+          assert x['prior_wave_payload_bytes_embedded']==0
+          assert x['wave_4_open_from_this_branch'] is False
+          committed=json.load(open('fixtures/repeat_use/CounterfactualAssignmentRequalification.v1.json'))
+          assert committed==x
+          receipt=json.load(open('receipts/f_ruv_w3q_b5_branch_completion_receipt.json'))
+          assert receipt['content_digest']==x['content_digest']
+          assert receipt['terminal_disposition']==x['terminal_disposition']
+          PY
