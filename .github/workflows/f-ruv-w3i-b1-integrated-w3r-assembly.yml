@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   assemble-and-validate:
@@ -56,28 +56,76 @@ jobs:
       - name: Execute semantic W3I assembly route
         run: |
           bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh /tmp/f-ruv-w3i-b1
-      - name: Freeze validated integrated target on disposable branch
-        if: success()
+      - name: Freeze complete immutable target carrier
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          if git diff --cached --quiet; then
-            echo 'No material target delta to commit.'
-          else
-            git commit -m 'fix(ruv): materialize semantic W3R integration'
-            git push origin HEAD:${TARGET_BRANCH}
-          fi
-          git rev-parse HEAD | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TARGET_SHA.txt
-          git ls-files -s | sha256sum | awk '{print $1}' | tee /tmp/f-ruv-w3i-b1/FINAL_INTEGRATED_TREE_INDEX_DIGEST.txt
-          (cd /tmp/f-ruv-w3i-b1 && find . -maxdepth 1 -type f -printf '%f\n' | sort > ARTIFACT_INDEX.txt && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
-      - name: Upload pointer-slim assembly evidence
-        if: always()
+          OUT=/tmp/f-ruv-w3i-b1
+          TREE="$OUT/FinalIntegratedW3RTarget.v2.tree"
+          rm -rf "$TREE" "$OUT/reconstruct-a" "$OUT/reconstruct-b"
+          mkdir -p "$TREE"
+          git ls-files -co --exclude-standard -z | sort -z | while IFS= read -r -d '' path; do
+            mkdir -p "$TREE/$(dirname "$path")"
+            cp -a -- "$path" "$TREE/$path"
+          done
+          python - "$TREE" "$OUT" <<'PY'
+          from pathlib import Path
+          import hashlib,json,sys
+          tree=Path(sys.argv[1]); out=Path(sys.argv[2])
+          files=[]
+          for p in sorted(x for x in tree.rglob('*') if x.is_file()):
+              rel=p.relative_to(tree).as_posix()
+              files.append({'path':rel,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'size':p.stat().st_size})
+          tree_payload={'schema_version':'gva06.f.ruv.complete-target-tree.v2','files':files}
+          tree_digest=hashlib.sha256(json.dumps(tree_payload,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          (out/'FinalIntegratedW3RTarget.v2.tree-manifest.json').write_text(json.dumps({**tree_payload,'tree_digest':tree_digest},indent=2,sort_keys=True)+'\n')
+          print(tree_digest)
+          PY
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -C "$OUT" -cf - FinalIntegratedW3RTarget.v2.tree | gzip -n > "$OUT/FinalIntegratedW3RTarget.v2.tar.gz"
+          sha256sum "$OUT/FinalIntegratedW3RTarget.v2.tar.gz" | tee "$OUT/FinalIntegratedW3RTarget.v2.tar.gz.sha256"
+          mkdir -p "$OUT/reconstruct-a" "$OUT/reconstruct-b"
+          tar -xzf "$OUT/FinalIntegratedW3RTarget.v2.tar.gz" -C "$OUT/reconstruct-a"
+          tar -xzf "$OUT/FinalIntegratedW3RTarget.v2.tar.gz" -C "$OUT/reconstruct-b"
+          diff -qr "$OUT/reconstruct-a" "$OUT/reconstruct-b"
+          for d in "$OUT/reconstruct-a/FinalIntegratedW3RTarget.v2.tree" "$OUT/reconstruct-b/FinalIntegratedW3RTarget.v2.tree"; do
+            PYTHONPATH="$d/src" python -c 'import repeat_use_harness; print(repeat_use_harness.__version__)'
+            (cd "$d" && PYTHONPATH=src python -m unittest discover -s tests -q)
+          done
+          python - "$OUT" <<'PY'
+          from pathlib import Path
+          import hashlib,json,sys
+          out=Path(sys.argv[1])
+          tm=json.loads((out/'FinalIntegratedW3RTarget.v2.tree-manifest.json').read_text())
+          archive=out/'FinalIntegratedW3RTarget.v2.tar.gz'
+          carrier={
+            'schema_version':'gva06.f.ruv.final-integrated-w3r-target.v2',
+            'artifact_id':'FinalIntegratedW3RTarget.v2',
+            'program_id':'GVA06.F.repeat-use-value-discovery.v2',
+            'status':'TARGET_CARRIER_CLOSED',
+            'tree_digest':tm['tree_digest'],
+            'archive_sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),
+            'file_count':len(tm['files']),
+            'reconstruction':{
+              'kind':'SELF_CONTAINED_FULL_TREE_ARCHIVE',
+              'archive':'FinalIntegratedW3RTarget.v2.tar.gz',
+              'tree_manifest':'FinalIntegratedW3RTarget.v2.tree-manifest.json',
+              'reconstructed_twice':True,
+              'reconstruction_byte_equal':True,
+              'unit_suite_reconstruction_a':'PASS',
+              'unit_suite_reconstruction_b':'PASS',
+            },
+            'claim_ceiling':'Complete target-carrier closure and controlled mechanical qualification operand only; no human repeat-use value, Wave-4 launch, release, merge, cutover, or owner admission.'
+          }
+          canonical=json.dumps(carrier,sort_keys=True,separators=(',',':')).encode()
+          carrier['target_identity']='sha256:'+hashlib.sha256(canonical).hexdigest()
+          (out/'FinalIntegratedW3RTarget.v2.json').write_text(json.dumps(carrier,indent=2,sort_keys=True)+'\n')
+          print(carrier['target_identity'])
+          PY
+          (cd "$OUT" && find . -maxdepth 1 -type f -printf '%f\n' | sort > ARTIFACT_INDEX.txt && find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS)
+      - name: Upload complete carrier and validation evidence
         uses: actions/upload-artifact@v4
         with:
-          name: GVA06_F_RUV_W3I_B1_assembly_evidence
+          name: GVA06_F_RUV_W3Q2R_B1_complete_target_carrier
           path: /tmp/f-ruv-w3i-b1
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 30
