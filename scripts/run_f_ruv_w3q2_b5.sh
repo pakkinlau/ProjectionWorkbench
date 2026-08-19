@@ -34,13 +34,20 @@ if [[ "$RECON" == PASS ]]; then
   git -C "$TARGET" apply --check "$PATCH" && git -C "$TARGET" apply --index "$PATCH" || RECON=FAIL
 fi
 if [[ "$RECON" == PASS ]]; then
-  # The frozen assembly artifact carries the B1 add-only payload separately from
-  # the combined integration patch. Reconstruct only declared ADD_B1 paths;
-  # overlap-owned harness/replay/review surfaces remain those in the patch.
-  python - "$ASSEMBLY" "$TARGET" <<'PY'
+  # The frozen assembly artifact carries the B1 semantic payload as a tarball.
+  # Reconstruct only declared ADD_B1 paths; overlap-owned harness/replay/review
+  # surfaces remain those already materialized by the combined patch.
+  B1_PAYLOAD_DIR="$ASSEMBLY/b1_payload_complete"
+  mkdir -p "$B1_PAYLOAD_DIR"
+  if ! tar -xzf "$ASSEMBLY/b1_payload.tar.gz" -C "$B1_PAYLOAD_DIR"; then
+    RECON=FAIL
+  fi
+fi
+if [[ "$RECON" == PASS ]]; then
+  if ! python - "$ASSEMBLY" "$B1_PAYLOAD_DIR" "$TARGET" <<'PY'
 import json, shutil, sys
 from pathlib import Path
-assembly=Path(sys.argv[1]); target=Path(sys.argv[2])
+assembly=Path(sys.argv[1]); payload=Path(sys.argv[2]); target=Path(sys.argv[3])
 actions=json.loads((assembly/'B1_SEMANTIC_PORT_ACTIONS.json').read_text())
 conflicts=json.loads((assembly/'B1_SEMANTIC_PORT_CONFLICTS.json').read_text())
 assert conflicts == [], conflicts
@@ -49,7 +56,7 @@ for row in actions:
     path=row['path']
     if row['action'] != 'ADD_B1':
         continue
-    source=assembly/'b1_payload'/path
+    source=payload/path
     destination=target/path
     if not source.is_file():
         raise SystemExit(f'missing B1 add-only payload: {path}')
@@ -59,13 +66,20 @@ for row in actions:
 assert added, 'no ADD_B1 payload paths reconstructed'
 (target/'.w3q2-b5-b1-add-paths.json').write_text(json.dumps(added,indent=2)+'\n')
 PY
+  then
+    RECON=FAIL
+  fi
+fi
+if [[ "$RECON" == PASS ]]; then
   mapfile -t B1_ADD_PATHS < <(python - "$TARGET/.w3q2-b5-b1-add-paths.json" <<'PY'
 import json,sys
 for path in json.load(open(sys.argv[1])):
     print(path)
 PY
 )
-  git -C "$TARGET" add -- "${B1_ADD_PATHS[@]}"
+  if ! git -C "$TARGET" add -- "${B1_ADD_PATHS[@]}"; then
+    RECON=FAIL
+  fi
   rm -f "$TARGET/.w3q2-b5-b1-add-paths.json"
 fi
 if [[ "$RECON" == PASS ]]; then
