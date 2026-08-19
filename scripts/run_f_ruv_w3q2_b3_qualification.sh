@@ -44,7 +44,8 @@ PY
 }
 
 reconstruct() {
-  local label="$1" work="$TMP/assembly-$label" evidence="$TMP/evidence-$label" target="$TMP/target-$label"
+  local label="$1"
+  local work="$TMP/assembly-$label" evidence="$TMP/evidence-$label" target="$TMP/target-$label"
   logrun git -C "$ROOT" worktree add --detach "$work" "$SOURCE_HEAD"
   prepare_integrator "$work"
   (cd "$work" && bash scripts/run_f_ruv_w3i_b1_integrated_w3r_assembly.sh "$evidence") 2>&1 | tee -a "$LOG"
