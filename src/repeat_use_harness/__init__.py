@@ -1,35 +1,5 @@
 """Public surface for the repeat-use value-discovery harness."""
-from .harness import (
-    AGENCY_EVENT_TYPES,
-    BRANCH_ID,
-    CAUSAL_TERMINAL_PRIORITY,
-    CLAIM_CEILING,
-    COMPARATOR_ARMS,
-    CONSENT_SCOPES,
-    EVENT_REQUIRED_METADATA,
-    EVENT_SCHEMA_VERSION,
-    HARNESS_SCHEMA_VERSION,
-    HUMAN_ONLY_FIELDS,
-    PROGRAM_ID,
-    REQUIRED_CONTROL_SURFACES,
-    SOURCE_TERMINALS,
-    HarnessValidationError,
-    append_event_file,
-    build_harness_manifest,
-    canonical_digest,
-    delete_export,
-    export_event_log,
-    load_json,
-    make_fixture,
-    materialize_fixture,
-    read_jsonl,
-    replay,
-    validate_assignment,
-    validate_consent,
-    validate_epoch,
-    validate_event,
-    write_json,
-)
+from .harness import *
 
 __all__ = [name for name in globals() if not name.startswith("_")]
-__version__ = "1.0.0"
+__version__ = "1.1.0"
