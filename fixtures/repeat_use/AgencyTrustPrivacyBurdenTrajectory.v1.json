@@ -1,0 +1,63 @@
+{
+  "accessibility_disposition": "RIGHT_CENSORED_UNOBSERVED",
+  "agency_disposition": "AGENCY_UNIDENTIFIABLE_FOR_CURRENT_EPISODE",
+  "agency_reason": "The owner selected the branch before its preregistration; this command initiates the protocol and cannot be reclassified as a prospectively observed later reuse choice.",
+  "artifact_id": "AgencyTrustPrivacyBurdenTrajectory.v1",
+  "branch_id": "F.RUV.W4.B8",
+  "burden_disposition": "RIGHT_CENSORED_NO_PROSPECTIVE_HUMAN_BURDEN_OR_REVIEW_ACCEPTABILITY_JUDGMENT",
+  "causal_accumulation_claim": false,
+  "claim_ceiling": "One prospectively bound real owner/project/inquiry episode for agency, trust, privacy and burden observation only. No positive repeat-use value, retention, accumulated-history benefit, product direction, network value, willingness to pay, market demand, release, cutover or owner admission.",
+  "comparator_status": "ABSENT_NOT_CLAIMED",
+  "condition_id": "C4_F2_ACCUMULATED_VALID_HISTORY",
+  "content_digest": "f422fe826f9c4dd21aac0d61cd7dcc73b54bc99849a9bdbbb0da037702c5b882",
+  "created_at": "2026-08-20T03:55:54Z",
+  "episode_count": 1,
+  "episode_ids": [
+    "episode:F.RUV.W4.B8.owner-dogfood.001"
+  ],
+  "exact_reentry": "On a later genuine Task-F work opportunity, preregister before outcome; allow voluntary reuse/bypass/abandonment; collect explicit post-use usefulness, next-action, history-benefit, burden-acceptability, privacy and trust/control judgments; add comparator and independent review where causal accumulation is claimed; rerun the same frozen instrument and return to web.synthesize -> web.steer.",
+  "human_only_observations": {
+    "accessibility_judgment": null,
+    "burden_acceptability_judgment": null,
+    "future_reuse_intent": null,
+    "history_materially_helped_judgment": null,
+    "next_action_change_judgment": null,
+    "post_use_usefulness_judgment": null,
+    "privacy_concern_judgment": null,
+    "trust_and_control_judgment": null
+  },
+  "human_repeat_use_value_supported": false,
+  "inquiry_id": "inquiry:F.RUV.W4.B8.pointer-slim-n2b-handoff",
+  "instrument_causal_terminal": "RIGHT_CENSORED",
+  "observed": {
+    "consent_withdrawal_observed": false,
+    "mechanical_n2b_handoff_execution": true,
+    "pointer_slim_requested_by_owner": true,
+    "public_github_use_authorized_by_owner": true,
+    "raw_prompt_or_source_exported_publicly": false
+  },
+  "participant_id": "participant:task-f-owner-pseudonymous-001",
+  "preregistration_ref": "N2B/control/ProspectiveBranchPreregistration.v1.json",
+  "privacy_disposition": "LOCAL_POINTER_ONLY_EVENT_LOG_RETAINED_IN_OWNER_HANDOFF; PUBLIC_GITHUB_SUMMARY_ONLY",
+  "product_direction_frozen": true,
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "project_id": "project:GVA06.F.repeat-use-value-discovery.v2",
+  "prospective_binding": true,
+  "qualification_conjunction": "sha256:043aa265a22bf21efc52d2cc89899843c843a1fd089a12bebf20e9709e2f6115",
+  "real_project_episode": true,
+  "replay_digest": "afe94161dad1ae7dea43f14ddcf8df4e7b342d85fbba39624077ee8dfe8624bf",
+  "replay_ref": "N2B/results/ReplayResult.v1.json",
+  "schema_version": "gva06.f.ruv.agency-trust-privacy-burden-trajectory.v1",
+  "target_identity": "sha256:b7d3d67c4d812fc28ffed2408fa41c96367fb99ce5cc1a6de77d5658709a6d9a",
+  "terminal_disposition": "RIGHT_CENSORED",
+  "terminal_reasons": [
+    "one episode is below the branch minimum of two prospective episodes",
+    "no later voluntary reuse/bypass/abandonment opportunity was prospectively observed",
+    "human-only burden, privacy, trust/control and accessibility judgments remain unknown",
+    "no typed comparator or independent-review receipt exists",
+    "mechanical execution cannot establish human value"
+  ],
+  "trajectory_id": "trajectory:F.RUV.W4.B8.owner-dogfood.001",
+  "trust_control_disposition": "RIGHT_CENSORED_NO_EXPLICIT_POST_USE_HUMAN_JUDGMENT",
+  "wave_id": "F.RUV.W4"
+}
