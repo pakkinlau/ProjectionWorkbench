@@ -1,0 +1,39 @@
+name: f-ruv-w4-b1-project-a-longitudinal-trajectory
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w4-b1-project-a-longitudinal-trajectory
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate pointer-slim branch evidence
+        run: |
+          set -euo pipefail
+          python trajectory/f_ruv_w4_b1/validate_branch.py | tee trajectory/f_ruv_w4_b1/validation-result.json
+          python -m json.tool trajectory/f_ruv_w4_b1/CARRIER.json >/dev/null
+          test ! -e trajectory/f_ruv_w4_b1/FinalIntegratedW3RTarget.v5.tar.gz
+      - name: Upload compact branch evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W4_B1_pointer_slim_branch_evidence
+          path: |
+            trajectory/f_ruv_w4_b1/README.md
+            trajectory/f_ruv_w4_b1/CARRIER.json
+            trajectory/f_ruv_w4_b1/BranchEvidence.v1.json.gz.b64
+            trajectory/f_ruv_w4_b1/validation-result.json
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 9

@@ -1,0 +1,11 @@
+{
+  "artifact_id": "F.RUV.W4.B1.BranchEvidenceCarrier.v1",
+  "base64_bytes": 8744,
+  "branch_id": "F.RUV.W4.B1",
+  "encoding": "base64(gzip(json))",
+  "gzip_bytes": 6556,
+  "gzip_sha256": "cef9bcb81086fd5e383a0d075bd6f63dfac333639ec760b555cd65780c751b66",
+  "raw_bytes": 29057,
+  "raw_sha256": "0ef3a42722787c2946a8af443354a239878d0eb0ddb379fdf46a9dc0cd086e54",
+  "terminal": "RIGHT_CENSORED"
+}
