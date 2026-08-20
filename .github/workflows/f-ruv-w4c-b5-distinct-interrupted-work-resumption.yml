@@ -3,6 +3,8 @@ name: f-ruv-w4c-b5-distinct-interrupted-work-resumption
 on:
   push:
     branches: [agent/f-ruv-w4c-b5-distinct-interrupted-work-resumption]
+  pull_request:
+    branches: [agent/f-ruv-w4-b5-interrupted-delayed-resumption]
   workflow_dispatch:
 
 permissions:
