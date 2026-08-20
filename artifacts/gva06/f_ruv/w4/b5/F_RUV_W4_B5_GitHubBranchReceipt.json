@@ -1,0 +1,37 @@
+{
+  "artifact_digests": {
+    "branch_completion_receipt": "sha256:79ab1c85dc38b15d1b41bc1cd3334baa543c34814bbb525df815cd7937282825",
+    "branch_return": "sha256:f3cc603a3ad6e7694b5045a60db5e2bdcf0057f1433c6e6ac444d042041ea0af",
+    "delayed_reentry_schedule": "sha256:2e2c42a63efba33c6e8ae8aef96616162344897fa00cf765f8a094a9ba0ec51c",
+    "terminal": "sha256:caab8be9ca86b76c7264bc9be80a7d095dd44cf034677612a6910c10368507a9"
+  },
+  "branch_id": "F.RUV.W4.B5",
+  "claim_boundary": "Prospective initialization and lawful right-censoring of one declared delayed-resumption trajectory only; no positive human repeat-use value or product-direction claim.",
+  "completion_predicate_result": "PASS",
+  "content_digest": "sha256:006c1b13c512d1fd076ea63545e30782e405c579e4ec593400a74717318e91a8",
+  "delayed_resumption_observed": false,
+  "first_zero": "DELAYED_RESUMPTION_OUTCOME_NOT_YET_OBSERVED",
+  "forbidden_bulk": {
+    "caches": 0,
+    "dependency_trees": 0,
+    "prior_wave_archives": 0,
+    "qualified_target_archives": 0,
+    "repository_snapshots": 0,
+    "virtual_environments": 0,
+    "wheels": 0
+  },
+  "human_value_supported": false,
+  "merge_destination": "F.RUV.W4.RollingSynthesis",
+  "pointer_slim": true,
+  "product_direction": "FROZEN",
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "qualified_target_identity": "sha256:b7d3d67c4d812fc28ffed2408fa41c96367fb99ce5cc1a6de77d5658709a6d9a",
+  "route_launch_digest": "a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa",
+  "route_semantic_tree": "1b30eec0f7967f8ad24fab6a55bfaea2ddaec719",
+  "schema_version": "gva06.f.ruv.w4-b5.github-branch-receipt.v1",
+  "stewardstack_commit": "5713f1fffdea8e56dd6f0242a4c247c7b4ae7659",
+  "target_suite": "PASS_137_OF_137",
+  "terminal_disposition": "RIGHT_CENSORED",
+  "wave_id": "F.RUV.W4",
+  "worker_return_count": 4
+}
