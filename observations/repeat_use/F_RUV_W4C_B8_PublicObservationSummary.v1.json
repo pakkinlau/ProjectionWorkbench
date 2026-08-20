@@ -1,0 +1,18 @@
+{
+  "artifact_id": "F_RUV_W4C_B8_PublicObservationSummary.v1",
+  "branch_id": "F.RUV.W4C.B8",
+  "claim_ceiling": "One prospectively registered Wave-4 continuation episode appended to the existing agency/trust/privacy/burden trajectory. The current use is protocol-required rather than a genuine non-protocol voluntary reuse opportunity. No human-only judgment is imputed. No positive or negative human repeat-use value, retention, accumulated-history benefit, product direction, network value, willingness to pay, market demand, release, cutover or owner admission is established.",
+  "content_digest": "a0df2c545e2d0be256d8c702f8794cb58060f1c8e5d8648a15db24eedb7df940",
+  "episode_count": 2,
+  "explicit_human_judgments_observed": 0,
+  "first_zero": "GENUINE_NON_PROTOCOL_AGENCY_CHOICE_AND_EXPLICIT_PRIVACY_TRUST_BURDEN_JUDGMENTS_UNOBSERVED",
+  "genuine_non_protocol_agency_choice_observed": false,
+  "human_repeat_use_value_supported": false,
+  "latest_episode_agency_class": "PROTOCOL_REQUIRED_CONTINUATION",
+  "predecessor_payload_embedded": false,
+  "product_direction": "FROZEN",
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "raw_prompt_or_source_content_included": false,
+  "terminal": "RIGHT_CENSORED",
+  "trajectory_id": "trajectory:F.RUV.W4.B8.owner-dogfood.001"
+}
