@@ -1,0 +1,64 @@
+name: f-ruv-w4c-b1-project-a-later-inquiry-delayed-reentry
+
+on:
+  push:
+    branches:
+      - agent/f-ruv-w4c-b1-project-a-later-inquiry-delayed-reentry
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify stacked predecessor and current control source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor a3d2555a9e1afd4d41d477cfde2e5edba967ed83 HEAD
+          test "$(git rev-parse a3d2555a9e1afd4d41d477cfde2e5edba967ed83:trajectory/f_ruv_w4_b1/README.md)" = "137389adc1222b86264ff39e5e0243a4e81bd810"
+          python - <<'PY'
+          import json,urllib.request
+          with urllib.request.urlopen('https://api.github.com/repos/pakkinlau/StewardStack/branches/main') as r:
+              x=json.load(r)
+          assert x['commit']['sha']=='5713f1fffdea8e56dd6f0242a4c247c7b4ae7659'
+          PY
+      - name: Validate pointer-slim Episode 0002 continuation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd trajectory/f_ruv_w4c_b1
+          sha256sum -c SHA256SUMS
+          python validate_branch.py --output /tmp/f-ruv-w4c-b1-output
+          test ! -e FinalIntegratedW3RTarget.v5.tar.gz
+      - name: Emit GitHub execution receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('/tmp/f-ruv-w4c-b1-output')
+          r={'schema_version':'gva06.f.ruv.github-execution-receipt.v1','artifact_id':'F.RUV.W4C.B1.GitHubExecutionReceipt.v1','branch_id':'F.RUV.W4C.B1','repository':'pakkinlau/ProjectionWorkbench','head_sha':os.environ.get('GITHUB_SHA'),'workflow_run_id':os.environ.get('GITHUB_RUN_ID'),'status':'PASS','terminal':'RIGHT_CENSORED','claim_ceiling':"Two prospectively bound Project-A episodes, including one later user-initiated Task-F inquiry and mechanically observed delayed reentry. No explicit human usefulness, next-action change, history-benefit, burden, voluntary reuse, retention, causal accumulation, product direction, population, market, hosted/network, release, cutover, or owner-admission claim."}
+          r['artifact_digest']=hashlib.sha256(json.dumps(r,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          (out/'GitHubExecutionReceipt.v1.json').write_text(json.dumps(r,indent=2,sort_keys=True)+'\n')
+          files=sorted(p for p in out.rglob('*') if p.is_file())
+          (out/'SHA256SUMS').write_text(''.join(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.relative_to(out).as_posix()}\n" for p in files))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GVA06_F_RUV_W4C_B1_pointer_slim_continuation_evidence
+          path: /tmp/f-ruv-w4c-b1-output
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 9
