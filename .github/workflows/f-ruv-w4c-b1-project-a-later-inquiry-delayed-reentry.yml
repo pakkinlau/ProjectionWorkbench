@@ -21,17 +21,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Verify stacked predecessor and current control source
+      - name: Verify stacked predecessor and bound control-source pointers
         shell: bash
         run: |
           set -euo pipefail
           git merge-base --is-ancestor a3d2555a9e1afd4d41d477cfde2e5edba967ed83 HEAD
           test "$(git rev-parse a3d2555a9e1afd4d41d477cfde2e5edba967ed83:trajectory/f_ruv_w4_b1/README.md)" = "137389adc1222b86264ff39e5e0243a4e81bd810"
           python - <<'PY'
-          import json,urllib.request
-          with urllib.request.urlopen('https://api.github.com/repos/pakkinlau/StewardStack/branches/main') as r:
-              x=json.load(r)
-          assert x['commit']['sha']=='5713f1fffdea8e56dd6f0242a4c247c7b4ae7659'
+          import json
+          x=json.load(open('trajectory/f_ruv_w4c_b1/Episode0002Pointer.v1.json'))
+          assert x['stewardstack_commit']=='5713f1fffdea8e56dd6f0242a4c247c7b4ae7659'
+          assert x['route_semantic_tree']=='1b30eec0f7967f8ad24fab6a55bfaea2ddaec719'
+          assert x['route_launch_digest']=='a4848d67212416935e25d8f4fc09b3aeee1b62b4c761c5cfd7055eb0e4b26baa'
           PY
       - name: Validate pointer-slim Episode 0002 continuation
         shell: bash
