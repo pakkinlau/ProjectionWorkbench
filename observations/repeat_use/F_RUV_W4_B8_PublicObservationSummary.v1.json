@@ -1,0 +1,20 @@
+{
+  "agency_disposition": "AGENCY_UNIDENTIFIABLE_FOR_CURRENT_EPISODE",
+  "artifact_id": "F_RUV_W4_B8_PublicObservationSummary.v1",
+  "branch_id": "F.RUV.W4.B8",
+  "claim_ceiling": "One prospectively bound real owner/project/inquiry episode for agency, trust, privacy and burden observation only. No positive repeat-use value, retention, accumulated-history benefit, product direction, network value, willingness to pay, market demand, release, cutover or owner admission.",
+  "content_digest": "9110435fefdbc487a7b840e02e68b6ba9e6b58015a5662b10795c204923465ab",
+  "episode_count": 1,
+  "exact_reentry": "On a later genuine Task-F work opportunity, preregister before outcome; allow voluntary reuse/bypass/abandonment; collect explicit post-use usefulness, next-action, history-benefit, burden-acceptability, privacy and trust/control judgments; add comparator and independent review where causal accumulation is claimed; rerun the same frozen instrument and return to web.synthesize -> web.steer.",
+  "human_only_fields_all_unknown": true,
+  "human_repeat_use_value_supported": false,
+  "participant_identity_mode": "PSEUDONYMOUS",
+  "preregistration_digest": "459c646042cc16f0c57a49d87882898c8a9f5a2f04e2158331c28eddf7231f5b",
+  "prior_wave_payload_bytes_embedded": 0,
+  "program_id": "GVA06.F.repeat-use-value-discovery.v2",
+  "raw_event_log_published": false,
+  "raw_prompt_or_source_content_published": false,
+  "schema_version": "gva06.f.ruv.public-observation-summary.v1",
+  "target_identity": "sha256:b7d3d67c4d812fc28ffed2408fa41c96367fb99ce5cc1a6de77d5658709a6d9a",
+  "terminal_disposition": "RIGHT_CENSORED"
+}
