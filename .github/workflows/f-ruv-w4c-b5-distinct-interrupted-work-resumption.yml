@@ -1,0 +1,62 @@
+name: f-ruv-w4c-b5-distinct-interrupted-work-resumption
+
+on:
+  push:
+    branches: [agent/f-ruv-w4c-b5-distinct-interrupted-work-resumption]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  execute-pointer-slim-continuation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Execute canonical W4C B5 temporal continuation
+        run: |
+          python scripts/run_f_ruv_w4c_b5_distinct_interrupted_work_resumption.py \
+            --output "$RUNNER_TEMP/gva06-f-ruv-w4c-b5"
+      - name: Validate bounded return and pointer-slim delta
+        run: |
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'gva06-f-ruv-w4c-b5'
+          term=json.loads((root/'InterruptedDelayedResumptionTrajectory.v2.json').read_text())
+          obs=json.loads((root/'EarlyReturnObservation.v1.json').read_text())
+          completion=json.loads((root/'BranchCompletionReceipt.json').read_text())
+          assert term['terminal_disposition']=='RIGHT_CENSORED'
+          assert term['first_zero']=='MINIMUM_DELAY_WINDOW_NOT_REACHED'
+          assert term['delayed_resumption_observed'] is False
+          assert term['resumption_episode_count']==0
+          assert obs['elapsed_seconds']==2610
+          assert obs['minimum_delay_seconds']==3600
+          assert obs['eligible_resumption_episode'] is False
+          assert completion['accepted_current'] is True
+          assert completion['completion_predicate_result']=='PASS'
+          required=['BranchReturn.json','WorkerReturn.W1.json','WorkerReturn.W2.json','WorkerReturn.W3.json','WorkerReturn.W4.json','MANIFEST.json','SHA256SUMS']
+          for name in required: assert (root/name).is_file(), name
+          prior='827eed52b965587edd4099dab7badb4741564d85'
+          changed=subprocess.check_output(['git','diff','--name-only',prior,'HEAD'],text=True).splitlines()
+          allowed={
+            '.github/workflows/f-ruv-w4c-b5-distinct-interrupted-work-resumption.yml',
+            'scripts/run_f_ruv_w4c_b5_distinct_interrupted_work_resumption.py',
+            'docs/f_ruv_w4c_b5_distinct_interrupted_work_resumption.md',
+            'artifacts/gva06/f_ruv/w4c/b5/F_RUV_W4C_B5_GitHubBranchReceipt.json',
+          }
+          assert set(changed)<=allowed, changed
+          PY
+      - name: Upload pointer-slim N2B return
+        uses: actions/upload-artifact@v4
+        with:
+          name: gva06-f-ruv-w4c-b5-n2b-return
+          path: ${{ runner.temp }}/gva06-f-ruv-w4c-b5
+          if-no-files-found: error
+          retention-days: 14
