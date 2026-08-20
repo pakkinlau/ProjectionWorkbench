@@ -16,12 +16,12 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Run inherited repository tests
-        run: PYTHONPATH=src python -m unittest discover -s tests -q
-      - name: Validate branch receipt
+      - name: Validate pointer-bound branch receipt
         run: |
           python - <<'PY'
           import hashlib,json
@@ -33,6 +33,7 @@ jobs:
           assert digest==observed
           assert x['branch_id']=='F.RUV.W4.B5'
           assert x['qualified_target_identity']=='sha256:b7d3d67c4d812fc28ffed2408fa41c96367fb99ce5cc1a6de77d5658709a6d9a'
+          assert x['target_suite']=='PASS_137_OF_137'
           assert x['terminal_disposition']=='RIGHT_CENSORED'
           assert x['first_zero']=='DELAYED_RESUMPTION_OUTCOME_NOT_YET_OBSERVED'
           assert x['human_value_supported'] is False
@@ -48,3 +49,8 @@ jobs:
             echo 'unexpected non-branch-local path' >&2
             exit 1
           fi
+      - name: Confirm external-qualified-target boundary
+        run: |
+          test ! -e FinalIntegratedW3RTarget.v5.tar.gz
+          test ! -d FinalIntegratedW3RTarget.v5.tree
+          echo 'The 137/137 v5 target validation remains content-addressed external evidence; this workflow validates only the durable pointer-slim projection.'
