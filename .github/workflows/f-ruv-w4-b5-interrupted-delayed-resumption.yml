@@ -1,0 +1,50 @@
+name: f-ruv-w4-b5-interrupted-delayed-resumption
+
+on:
+  push:
+    branches: [agent/f-ruv-w4-b5-interrupted-delayed-resumption]
+  pull_request:
+    branches: [agent/f-ruv-w3i-b1-integrated-w3r-repair-assembly]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-pointer-slim-return:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run inherited repository tests
+        run: PYTHONPATH=src python -m unittest discover -s tests -q
+      - name: Validate branch receipt
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('artifacts/gva06/f_ruv/w4/b5/F_RUV_W4_B5_GitHubBranchReceipt.json')
+          x=json.loads(p.read_text())
+          digest=x.pop('content_digest')
+          observed='sha256:'+hashlib.sha256(json.dumps(x,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+          assert digest==observed
+          assert x['branch_id']=='F.RUV.W4.B5'
+          assert x['qualified_target_identity']=='sha256:b7d3d67c4d812fc28ffed2408fa41c96367fb99ce5cc1a6de77d5658709a6d9a'
+          assert x['terminal_disposition']=='RIGHT_CENSORED'
+          assert x['first_zero']=='DELAYED_RESUMPTION_OUTCOME_NOT_YET_OBSERVED'
+          assert x['human_value_supported'] is False
+          assert x['delayed_resumption_observed'] is False
+          assert x['completion_predicate_result']=='PASS'
+          assert x['worker_return_count']==4
+          assert all(v==0 for v in x['forbidden_bulk'].values())
+          PY
+      - name: Verify product-code neutrality
+        run: |
+          git diff --name-only HEAD^ HEAD | tee /tmp/changed.txt
+          if grep -Ev '^(docs/f_ruv_w4_b5_interrupted_delayed_resumption_execution.md|artifacts/gva06/f_ruv/w4/b5/F_RUV_W4_B5_GitHubBranchReceipt.json|.github/workflows/f-ruv-w4-b5-interrupted-delayed-resumption.yml)$' /tmp/changed.txt | grep -q .; then
+            echo 'unexpected non-branch-local path' >&2
+            exit 1
+          fi
